@@ -1,0 +1,66 @@
+/* General Button Styles */
+.button {
+  display: inline-flex;
+  align-items: center;
+  padding: 8px 12px;
+  gap: 8px;
+  border: 1px solid #d0d5dd;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+/* Default State */
+.button.default {
+  background: #ffffff;
+  color: #98a2b3;
+}
+
+.button.default .icon,
+.button.default .text {
+  color: #98a2b3;
+}
+
+/* Active State */
+.button.active {
+  background: #f2f4f7;
+  color: #344054;
+}
+
+.button.active .icon,
+.button.active .text {
+  color: #344054;
+}
+
+/* Viewed State */
+.button.viewed {
+  background: #ffffff;
+  color: #98a2b3;
+}
+
+.button.viewed .icon,
+.button.viewed .text {
+  color: #98a2b3;
+}
+
+/* Hover State */
+.button.hover {
+  background: #f9fafb;
+  color: #344054;
+}
+
+.button.hover .icon,
+.button.hover .text {
+  color: #344054;
+}
+
+/* Active + Hover State */
+.button.active.hover {
+  background: #eaecf0;
+  color: #344054;
+}
+
+.button.active.hover .icon,
+.button.active.hover .text {
+  color: #344054;
+}

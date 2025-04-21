@@ -1,0 +1,79 @@
+.bottom-panel {
+    background-color: #fff;
+  }
+  
+  .bottom-button {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    padding: 24px 16px 16px;
+    gap: 16px;
+    height: 84px;
+    background: #FFFFFF;
+    /* border-radius: 5px; */
+    position: relative;
+  }
+  
+  /* States */
+  .bottom-button.default-0 {
+    width: 237px;
+    height: 64px;
+    border-top: 12px solid #BD6697;
+  }
+  .bottom-button.default-1 {
+    width: 275px;
+    height: 64px;
+    border-top: 12px solid #67BC46;
+  }
+  .bottom-button.default-2 {
+    width: 275px;
+    height: 64px;
+    border-top: 12px solid #F89B1B;
+  }
+  .bottom-button.default-3 {
+    width: 237px;
+    height: 64px;
+    border-top: 12px solid #009FDA;
+  }
+  
+  .bottom-button.active {
+    background: linear-gradient(0deg, rgba(189, 102, 151, 0.1), rgba(189, 102, 151, 0.1)), #FFFFFF;
+  }
+  
+  .bottom-button.viewed {
+    height: 84px;
+  }
+  
+  .bottom-button.hover {
+    background: #F5F5F5;
+  }
+
+  .icon-container {
+    width: 16px;
+    height: 16px;
+    background: #34C759; /* Green Viewed */
+    border-radius: 50%;
+  }
+  
+
+  .text-container {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+  }
+  
+  .label {
+    font-family: 'Work Sans';
+    font-weight: 400;
+    font-size: 14px;
+    color: #454545;
+  }
+  
+  .viewed-tag {
+    font-family: 'Work Sans';
+    font-style: italic;
+    font-weight: 400;
+    font-size: 12px;
+    color: #1E1E1E;
+    letter-spacing: 0.32px;
+  }  
