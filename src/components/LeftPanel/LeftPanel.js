@@ -1,6 +1,6 @@
 import React from 'react';
 
-const LeftPanel = () => {
+const LeftPanel = ({ showExtraButtons }) => {
   return (
     <div
       style={{
@@ -10,6 +10,7 @@ const LeftPanel = () => {
         display: 'flex',
         flexDirection: 'column',
         justifyContent: 'space-between',
+        fontFamily: 'Work Sans, sans-serif',
       }}
     >
       {/* Instructions Tab */}
@@ -34,14 +35,12 @@ const LeftPanel = () => {
             alignItems: 'center',
             justifyContent: 'center',
             gap: '78px',
-            fontFamily: 'Work Sans',
             fontWeight: 600,
             fontSize: '16px',
             color: '#252525',
           }}
         >
-          {/* Vertical line */}
-          <div className='d-flex align-items-center' style={{gap:'10px'}}>
+          <div className="d-flex align-items-center" style={{ gap: '10px' }}>
             <div
               style={{
                 width: '4px',
@@ -49,11 +48,8 @@ const LeftPanel = () => {
                 backgroundColor: '#BD6697',
               }}
             ></div>
-
             <div>Instructions</div>
           </div>
-
-          {/* Circle */}
           <div
             style={{
               width: '16px',
@@ -65,8 +61,51 @@ const LeftPanel = () => {
         </div>
       </div>
 
+      {/* Extra Buttons */}
+      {showExtraButtons && (
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '8px', marginTop: '16px' }}>
+          <button
+            style={{
+              width: '146px',
+              height: '40px',
+              gap: '8px',
+              borderRadius: '6px',
+              border: '1px solid #D4D4D4',
+              padding: '8px 16px',
+              backgroundColor: '#FFFFFF',
+              color: '#454545',
+              fontWeight: 500,
+              fontSize: '16px',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+            }}
+          >
+            Critical Periods
+          </button>
+          <button
+            style={{
+              width: '146px',
+              height: '40px',
+              gap: '8px',
+              borderRadius: '6px',
+              border: '1px solid #D4D4D4',
+              padding: '8px 16px',
+              backgroundColor: '#FFFFFF',
+              color: '#454545',
+              fontWeight: 500,
+              fontSize: '16px',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+            }}
+          >
+            Maternal Lifestyle
+          </button>
+        </div>
+      )}
 
-      {/* Bottom Button */}
+      {/* My Notes Button */}
       <button
         className="d-flex align-items-center"
         style={{
@@ -74,12 +113,13 @@ const LeftPanel = () => {
           height: '40px',
           gap: '8px',
           borderRadius: '6px',
-          border: '1px solid var(--border-color)',
+          border: '1px solid #D4D4D4',
           padding: '8px 16px',
           backgroundColor: '#FFFFFF',
           color: '#454545',
           fontWeight: 500,
           fontSize: '16px',
+          alignSelf: 'flex-start',
         }}
       >
         <span className="material-icons" style={{ color: '#22242C' }}>
@@ -87,7 +127,6 @@ const LeftPanel = () => {
         </span>
         MY NOTES
       </button>
-
     </div>
   );
 };

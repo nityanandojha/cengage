@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Button } from 'react-bootstrap';
 
-const RightPanel = () => {
+const RightPanel = ({ onStart }) => {
   const [videoEnded, setVideoEnded] = useState(false);
 
   return (
@@ -22,7 +22,7 @@ const RightPanel = () => {
     >
       <h5 style={{ fontWeight: 500, color: '#22242C' }}>Instructions</h5>
 
-      {/* Accordion*/}
+      {/* Accordion */}
       <div
         style={{
           position: 'absolute',
@@ -65,8 +65,15 @@ const RightPanel = () => {
               aria-labelledby="headingOne"
               data-bs-parent="#scriptAccordion"
             >
-              <div className="accordion-body" style={{height: '425px', overflow: 'auto', overflowX: 'hidden'}}>
-                Hi, I’m Dr. Mathilde Feldman. I work for the Women’s Health Center, where, as a clinical psychologist, I often consult with people who are feeling overwhelmed by an unexpected pregnancy.Even when women know that they want their baby, they still may have mixed feelings and encounter considerable stress themselves, and in their relationships with partners and other family. Sometimes they face difficult decisions that have no easy solution.I’d be interested in hearing what you think about a woman I’m working with now. Catarina is a 22-year-old woman who recently found herself unexpectedly pregnant. She and her partner both want the baby, but she has some serious concerns about how to provide her baby with the best possible prenatal environment. For example, what are the potential effects of alcohol use, including just social drinking, early in pregnancy, before a woman even knows she is pregnant? What about exposure to smoke from cigarettes or vapors from e-cigs? How important is diet? What about prescription medications that are critical to the mother’s health but might be harmful to the developing baby?These are the questions you will answer as you Make a Decision.To answer the questions, you will Investigate the Evidence I have collected from the life of Catarina.But before you Investigate the Evidence , take some time to Consult the Research I’ve collated for you.
+              <div
+                className="accordion-body"
+                style={{
+                  height: '425px',
+                  overflow: 'auto',
+                  overflowX: 'hidden',
+                }}
+              >
+                Hi, I’m Dr. Mathilde Feldman. I work for the Women’s Health Center, where, as a clinical psychologist, I often consult with people who are feeling overwhelmed by an unexpected pregnancy. Even when women know that they want their baby, they still may have mixed feelings and encounter considerable stress themselves, and in their relationships with partners and other family. Sometimes they face difficult decisions that have no easy solution. I’d be interested in hearing what you think about a woman I’m working with now. Catarina is a 22-year-old woman who recently found herself unexpectedly pregnant. She and her partner both want the baby, but she has some serious concerns about how to provide her baby with the best possible prenatal environment. For example, what are the potential effects of alcohol use, including just social drinking, early in pregnancy, before a woman even knows she is pregnant? What about exposure to smoke from cigarettes or vapors from e-cigs? How important is diet? What about prescription medications that are critical to the mother’s health but might be harmful to the developing baby? These are the questions you will answer as you Make a Decision. To answer the questions, you will Investigate the Evidence I have collected from the life of Catarina. But before you Investigate the Evidence, take some time to Consult the Research I’ve collated for you.
               </div>
             </div>
           </div>
@@ -110,6 +117,7 @@ const RightPanel = () => {
       <Button
         variant="primary"
         disabled={!videoEnded}
+        onClick={onStart}
         style={{
           width: '106px',
           height: '40px',
