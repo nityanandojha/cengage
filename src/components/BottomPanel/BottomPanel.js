@@ -1,32 +1,38 @@
 import React from 'react';
 import './BottomPanel.css';
 
-const buttons = [
+/* const buttons = [
   { id: 1, label: 'Introduction', sub: '', state: 'default' },
   { id: 2, label: 'Artifacts I', sub: 'Consult the Research', state: 'default' },
   { id: 3, label: 'Artifacts II', sub: 'Investigate the Evidence', state: 'default' },
   { id: 4, label: 'Last', sub: 'Make a Decision', state: 'default' },
-];
+]; */
 
-/* { id: 3, label: 'Chapter 2', state: 'viewed' },
-  { id: 4, label: 'Summary', state: 'hover' },
-  { id: 3, label: 'Chapter 2', state: 'active' },
-  { id: 4, label: 'Summary', state: 'hover' }, */
+const buttons = [
+  { id: 1, label: 'Viewed', sub: 'Introduction', borderColor: '#BD6697', className: 'btn-intro', state: 'viewed' },
+  { id: 2, label: 'Artifacts I', sub: 'Consult the Research', borderColor: '#67BC46', className: 'btn-artifacts1', state: 'default' },
+  { id: 3, label: 'Artifacts II', sub: 'Investigate the Evidence', borderColor: '#F89B1B', className: 'btn-artifacts2', state: 'default' },
+  { id: 4, label: 'Last', sub: 'Make a Decision', borderColor: '#009FDA', className: 'btn-last', state: 'default' },
+];
 
 const BottomPanel = () => {
   return (
-    <div className="bottom-panel d-flex py-2" style={{width: '1024px'}}>
+    <div className="bottom-panel d-flex py-2" style={{ width: '1024px' }}>
       {buttons.map((btn, indx) => (
-        <div key={btn.id} className={`bottom-button ${btn.state}-${indx}`}>
+        <div key={`${btn.id}-${indx}`} className={`bottom-button ${btn.className}`}>
           <div className="icon-container">
-            <div className="status-indicator" />
+            
+            <div className="status-indicator checked"></div>
+            <div className={`status-indicator ${btn.state}`}>
+              {btn.state === 'viewed' && <span className="tick">✓</span>}
+            </div>
+
           </div>
           <div className="text-container">
-            <div className="label">{btn.label}</div>
+            {/* <div className="label">{btn.label}</div> */}
+            {btn.state === 'viewed' && <div className="viewed-tag">Viewed</div>}
             <div className="sub">{btn.sub}</div>
-            {btn.state === 'viewed' && (
-              <div className="viewed-tag">Viewed</div>
-            )}
+            
           </div>
         </div>
       ))}
