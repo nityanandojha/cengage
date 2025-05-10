@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 
 const LeftPanel = ({ showExtraButtons }) => {
   const [showNotesPopup, setShowNotesPopup] = useState(false);
+  const [showNewNotePopup, setShowNewNotePopup] = useState(false);
   const [selectedTab, setSelectedTab] = useState('All');
 
   return (
@@ -145,7 +146,7 @@ const LeftPanel = ({ showExtraButtons }) => {
       {/* MY NOTES Button at Bottom */}
 
       <button
-      onClick={() => setShowNotesPopup(true)}
+        onClick={() => setShowNotesPopup(true)}
         style={{
           width: '146px',
           height: '40px',
@@ -246,12 +247,13 @@ const LeftPanel = ({ showExtraButtons }) => {
 
           <div style={{
             marginTop: "20px",
-              width: '100%',
-              borderBottom: '1px solid #E0E0E0',
-            }}></div>
+            width: '100%',
+            borderBottom: '1px solid #E0E0E0',
+          }}></div>
 
           {/* Create New Note */}
           <button
+            onClick={() => setShowNewNotePopup(true)}
             style={{
               marginTop: '30px',
               width: '100%',
@@ -266,6 +268,90 @@ const LeftPanel = ({ showExtraButtons }) => {
           >
             + Create New Note
           </button>
+
+          {showNewNotePopup && (
+            <div
+              style={{
+                position: 'absolute',
+                bottom: '137px',
+                left: '252px', // 236px + some gap (~16px)
+                width: '292px',
+                backgroundColor: '#FFFFFF',
+                border: '1px solid #D4D4D4',
+                borderRadius: '8px',
+                padding: '12px',
+                display: 'flex',
+                flexDirection: 'column',
+                gap: '8px',
+                zIndex: 11,
+                boxShadow: '0px 2px 6px rgba(0,0,0,0.1)',
+              }}
+            >
+              {/* Header Area */}
+              <div
+                style={{
+                  width: '100%',
+                  height: '68px',
+                  border: '1px solid #D4D4D4',
+                  borderRadius: '8px',
+                  padding: '12px',
+                  boxSizing: 'border-box',
+                  display: 'flex',
+                  alignItems: 'center',
+                }}
+              >
+                <span style={{ fontWeight: 500, fontSize: '14px', color: '#252525' }}>
+                  New Note Title
+                </span>
+              </div>
+
+              {/* Text Area Area */}
+              <div
+                style={{
+                  width: '100%',
+                  height: '276px',
+                  border: '1px solid #D4D4D4',
+                  borderRadius: '8px',
+                  padding: '12px',
+                  boxSizing: 'border-box',
+                  marginTop: '8px',
+                }}
+              >
+                {/* Close Icon */}
+<span
+  className="material-icons"
+  onClick={() => setShowNewNotePopup(false)}
+  style={{
+    position: 'absolute',
+    top: '3px',
+    left: '3px',
+    width: '14px',
+    height: '14px',
+    fontSize: '14px',
+    color: '#777',
+    cursor: 'pointer',
+  }}
+>
+  close
+</span>
+
+                <textarea
+                  style={{
+                    width: '100%',
+                    height: '100%',
+                    border: 'none',
+                    resize: 'none',
+                    fontSize: '14px',
+                    fontFamily: 'inherit',
+                    outline: 'none',
+                  }}
+                  placeholder="Write your note here..."
+                />
+              </div>
+            </div>
+          )}
+
+
         </div>
       )}
     </div>
