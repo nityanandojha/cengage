@@ -9,7 +9,7 @@ const AdvicePopup = ({ onClose }) => {
       <div>
         <div className="advice-popup-title">Advice</div>
         <div className="advice-popup-content">
-        Content 
+        These are the factors you will consider when you Investigate the Evidence about the areas that are important for parents to address post divorce. 
         </div>
       </div>
 
