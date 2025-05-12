@@ -94,7 +94,7 @@ const RightPanel = ({ onStart, showVideoPage = true }) => {
             style={{ borderRadius: '4px' }}
             onEnded={() => setVideoEnded(true)}
           >
-            <source src="/videos/ch0.mp4" type="video/mp4" />
+            <source src="/videos/psych_post_divorce_adjustment.mp4" type="video/mp4" />
             Your browser does not support the video tag.
           </video>
         </div>
