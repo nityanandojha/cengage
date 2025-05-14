@@ -303,10 +303,20 @@ const RightPanel = ({
 
       {/* Pre-start instructions */}
       {!started && configShowVideo && (
-        <p style={{ maxWidth: '70%', color: '#444', fontSize: 15 }}>
-          To answer the questions, you will <strong>Investigate the Evidence</strong> I have collected
-          from the life of Catarina. But before you <strong>Investigate the Evidence</strong>, take some
-          time to <strong>Consult the Research</strong> I’ve collated for you.
+        <p style={{ maxWidth: '70%', color: '#444', fontSize: 15, overflow: "auto", height: "150px" }}>
+          Parental divorce is a life-changing event that can require families to make big adjustments.
+
+          Both parents and children can struggle to settle into new circumstances, and many factors can affect how well families navigate the transition.
+
+          How much conflict is there between parents after the divorce?
+
+          How important is it that the child spend time with each parent, and how much time is the right amount now that there are two households?
+
+          Do other changes, like moving homes or changing schools, affect children?
+
+          Review the research that can be applied to this case under "Consult the Research" and then dig deeper into the Mason family's current circumstances while you "Investigate the Evidence".
+
+          After you've gathered all the information, make a decision about what you think the best course of action is for the Masons, giving a rationale for your thinking process.
         </p>
       )}
 
