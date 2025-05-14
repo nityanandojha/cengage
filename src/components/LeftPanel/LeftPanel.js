@@ -26,7 +26,7 @@ const LeftPanel = ({
       boxSizing: 'border-box',
       fontFamily: 'Work Sans, sans-serif',
       margin: '6px',
-      position: 'relative'
+      // position: 'relative'
     }}>
       {/* Primary List */}
       <div style={{
@@ -94,6 +94,8 @@ const LeftPanel = ({
           alignItems: 'center',
           justifyContent: 'center',
           gap: '5px',
+          position: 'absolute',
+          bottom: '115px',
         }}
       >
         <span className="material-icons" style={{ color: '#22242C' }}>edit_note</span>
@@ -104,8 +106,9 @@ const LeftPanel = ({
       {showNotesPopup && (
         <div style={{
           position: 'absolute',
-          top: '210px',
-          left: '10px',
+          bottom: '130px',
+          // top: '210px',
+          left: '40px',
           width: '236px',
           height: '210px',
           backgroundColor: '#FFF',
@@ -192,7 +195,7 @@ const LeftPanel = ({
         <div style={{
           position: 'absolute',
           top: '210px',
-          left: '250px',
+          left: '290px',
           width: '292px',
           backgroundColor: '#FFF',
           border: '1px solid #D4D4D4',
@@ -202,18 +205,21 @@ const LeftPanel = ({
           zIndex: 11,
           boxSizing: 'border-box',
         }}>
-          <span
-            className="material-icons"
-            onClick={() => setShowNewNotePopup(false)}
-            style={{
-              position: 'absolute',
-              top: '3px',
-              right: '3px',
-              fontSize: '14px',
-              color: '#777',
-              cursor: 'pointer',
-            }}
-          >close</span>
+          <div style={{ display: 'flex', justifyContent: 'flex-end' }}>
+            <span
+              className="material-icons"
+              onClick={() => setShowNewNotePopup(false)}
+              style={{
+                fontSize: '20px',
+                color: '#777',
+                cursor: 'pointer',
+                paddingBottom: '6px',
+              }}
+            >
+              close
+            </span>
+          </div>
+
           <div style={{
             width: '100%',
             height: '68px',
