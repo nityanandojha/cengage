@@ -5,6 +5,14 @@ import image from '../Assets/svg/Image.svg';
 export const RIGHT_CONFIG = {
     main: {
         contentTitle: [],
+        questionAnswer: [
+            {
+                type: 'video',
+                title: 'video',
+                content: {
+                    video: "/videos/psych_post_divorce_adjustment.mp4"
+                }
+            }],
         script: "Hi, I’m Dr. Mathilde Feldman. … (main tab script content here)",
         showVideoPage: true,
     },
@@ -112,7 +120,8 @@ export const RIGHT_CONFIG = {
         contentTitle: [
             "Read the Researcrtifactnd collect notes, and evidence. You can highlight and save anything you think is evidence worthy for your reference when you get to the make a decision tab.",
             "Now that you’ve nsultedhe research and reviewed the evidence, you will complete an assessment that will help you synthesize what you’ve learned and make a decision [insert content-specific information here]."
-        ], questionAnswer: [
+        ],
+        questionAnswer: [
             {
                 unorderOption: [
                     {

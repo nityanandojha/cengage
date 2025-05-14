@@ -282,7 +282,6 @@ const LeftPanel = ({
             </div>
           ) : (
             <div style={{
-              width: '292px',
               height: '52px',
               border: '1px solid #D4D4D4',
               borderRadius: '8px',
@@ -297,7 +296,7 @@ const LeftPanel = ({
                   key={color}
                   onClick={() => setSelectedHighlightColor(color)}
                   style={{
-                    width: '27px',
+                    width: color === 'NONE' ? '55px' : '27px',
                     height: '27px',
                     borderRadius: '4px',
                     border: selectedHighlightColor === color ? '2px solid #007BFF' : '1px solid #D4D4D4',
