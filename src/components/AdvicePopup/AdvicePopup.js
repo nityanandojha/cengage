@@ -1,10 +1,10 @@
 import React from 'react';
 import './AdvicePopup.css';
 
-const AdvicePopup = ({ onClose }) => {
+const AdvicePopup = ({ onClose, color }) => {
   return (
     <div className="advice-popup">
-      <button className="advice-popup-close" onClick={onClose}>✕</button>
+      <button className="advice-popup-close" style={{ color: color }} onClick={onClose}>✕</button>
 
       <div>
         <div className="advice-popup-title">Advice</div>
@@ -14,7 +14,7 @@ const AdvicePopup = ({ onClose }) => {
       </div>
 
       <div className="advice-popup-footer">
-        <button className="advice-popup-ok-btn" onClick={onClose}>OK</button>
+        <button className="advice-popup-ok-btn" style={{ backgroundColor: color, borderColor: color }} onClick={onClose}>OK</button>
       </div>
     </div>
   );

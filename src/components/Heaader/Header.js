@@ -1,22 +1,20 @@
 import React, { useState } from 'react';
 import AdvicePopup from '../AdvicePopup/AdvicePopup';
 
-const Header = () => {
+const Header = ({ title, color, bgColor }) => {
   const [showPopup, setShowPopup] = useState(false);
 
   return (
-    <div style={{ position: 'relative', width: '1024px' }}>
+    <div style={{ position: 'relative', width: '100%', borderBottom: '1px solid #D4D4D4' }}>
       <div
         className="d-flex justify-content-between align-items-center"
         style={{
-          width: '1024px',
+          width: '100%',
           height: '72px',
-          borderBottom: '1px solid var(--border-color)',
           fontFamily: 'Work Sans',
         }}
       >
-        <div
-          className="mb-0"
+        <h2
           style={{
             fontWeight: 500,
             fontSize: '18px',
@@ -25,8 +23,8 @@ const Header = () => {
             marginLeft: '22px',
           }}
         >
-          Investigate Development: Real-Life Application Prototype Functionality Guidelines
-        </div>
+          {title}
+        </h2>
 
         <button
           className="d-flex align-items-center"
@@ -34,20 +32,18 @@ const Header = () => {
             width: '123px',
             height: '40px',
             borderRadius: '4px',
-            border: '1px solid #BD6697',
-            padding: '8px 16px',
-            backgroundColor: '#B9508C1A',
-            color: '#BD6697',
-            fontWeight: '500',
+            border: `1px solid ${color}`,
+            backgroundColor: bgColor,
+            color,
+            fontWeight: 500,
             gap: '8px',
             marginRight: '10px',
           }}
-          onClick={() => setShowPopup(!showPopup)}
+          onClick={() => setShowPopup(v => !v)}
         >
           <span
             style={{
-              border: '2px solid #BD6697',
-              color: '#BD6697',
+              border: `2px solid ${color}`,
               borderRadius: '50%',
               width: '24px',
               height: '24px',
@@ -55,7 +51,7 @@ const Header = () => {
               alignItems: 'center',
               justifyContent: 'center',
               fontSize: '16px',
-              lineHeight: '0',
+              lineHeight: 0,
             }}
           >
             ?
@@ -64,7 +60,7 @@ const Header = () => {
         </button>
       </div>
 
-      {showPopup && <AdvicePopup onClose={() => setShowPopup(false)} />}
+      {showPopup && <AdvicePopup onClose={() => setShowPopup(false)} color={color}/>}
     </div>
   );
 };

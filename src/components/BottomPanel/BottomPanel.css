@@ -1,47 +1,45 @@
 .bottom-panel {
   display: flex;
-  width: 1024px;
+  width: 100%;
+  /* full width container */
   padding: 0.5rem 0;
+  gap: 0;
+  /* you can add gap: 8px; if you want spacing */
 }
 
 .bottom-button {
-  width: 244px;
+  flex: 1;
+  /* each button takes equal share */
+  /* alternatively: width: 25%; */
   height: 80px;
   border-top: 12px solid transparent;
-  padding: 24px 16px 16px 16px;
+  padding: 24px 16px 16px;
   background-color: #fff;
   display: flex;
   align-items: center;
   box-sizing: border-box;
 }
 
-.bottom-button:hover {
-  transform: translateY(-2px);
-}
-
+/* remove any width: '25%' or width: '100%' from your .btn-* classes */
 .btn-intro {
-  width: 237px;
-  height: 84px;
   border-top-color: #BD6697;
 }
 
 .btn-artifacts1 {
-  width: 275px;
-  height: 80px;
   border-top-color: #67BC46;
 }
 
 .btn-artifacts2 {
-  width: 275px;
-  height: 80px;
   border-top-color: #F89B1B;
 }
 
 .btn-last {
-  width: 237px;
-  height: 80px;
   border-top-color: #009FDA;
 }
+
+/* .bottom-button:hover {
+  transform: translateY(-2px);
+} */
 
 /* Inner layout */
 .icon-container {
@@ -49,6 +47,7 @@
   display: flex;
   align-items: center;
 }
+
 .status-indicator {
   width: 16px;
   height: 16px;

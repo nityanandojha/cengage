@@ -1,9 +1,9 @@
 .advice-popup {
     position: absolute;
     top: 68px;
-    left: 410px;
+    right: 7px;
     width: 600px;
-    height: 176px;
+    height: 185px;
     border-radius: 8px;
     border: 1px solid #DEE2E6;
     background-color: #FFFFFF;

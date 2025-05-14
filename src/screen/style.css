@@ -1,0 +1,17 @@
+.tabContainer {
+  display: flex;
+  width: 99%;
+  /* margin-top: 10px; */
+  /* height: 90%; */
+  /* margin: 10px; */
+  /* fill the parent (.centered) */
+}
+
+/* exactly 40% / 60% */
+.tabLeft {
+  flex: 0 0 25%;
+}
+
+.tabRight {
+  flex: 0 0 75%;
+}

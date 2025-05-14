@@ -1,148 +1,81 @@
+// src/components/LeftPanel/LeftPanel.jsx
 import React, { useState } from 'react';
+import { LEFT_CONFIG } from '../../data/LEFT_CONFIG';
 
-const LeftPanel = ({ showExtraButtons }) => {
+const LeftPanel = ({
+  tab,
+  pageIndex,
+  onPageSelect
+}) => {
   const [showNotesPopup, setShowNotesPopup] = useState(false);
   const [showNewNotePopup, setShowNewNotePopup] = useState(false);
   const [selectedTab, setSelectedTab] = useState('All');
   const [noteTab, setNoteTab] = useState('Take Notes');
   const [selectedHighlightColor, setSelectedHighlightColor] = useState('None');
 
+  // pull in the arrays for this tab (or fallback to main)
+  const { primary } = LEFT_CONFIG[tab] || LEFT_CONFIG.main;
+
   return (
-    <div
-      style={{
-        backgroundColor: '#FFFFFF',
-        display: 'flex',
-        flexDirection: 'column',
-        justifyContent: 'space-between',
-        gap: '16px',
-        boxSizing: 'border-box',
-        fontFamily: 'Work Sans, sans-serif',
-      }}
-    >
-      {/* Top Section */}
-      <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
-        {/* Instructions Tab */}
-        <div
-          style={{
-            height: '80px',
-            padding: '16px',
-            borderRadius: '4px',
-            border: '1px solid #dee2e6',
-            display: 'flex',
-            justifyContent: 'space-between',
-            alignItems: 'center',
-          }}
-        >
-          <div className="d-flex align-items-center" style={{ gap: '10px' }}>
-            <div
-              style={{
-                width: '4px',
-                height: '40px',
-                backgroundColor: '#BD6697',
-              }}
-            ></div>
-            <div
-              style={{
-                fontWeight: 600,
-                fontSize: '16px',
-                color: '#252525',
-              }}
-            >
-              The Instructions Tab
-            </div>
-          </div>
+    <div style={{
+      backgroundColor: '#FFF',
+      display: 'flex',
+      flexDirection: 'column',
+      justifyContent: 'space-between',
+      gap: '16px',
+      boxSizing: 'border-box',
+      fontFamily: 'Work Sans, sans-serif',
+      margin: '6px',
+      position: 'relative'
+    }}>
+      {/* Primary List */}
+      <div style={{
+        padding: '10px',
+        border: '1px solid #dee2e6',
+        borderRadius: '4px'
+      }}>
+        {primary.map((item, idx) => (
           <div
+            key={idx}
+            onClick={() => onPageSelect(idx)}
             style={{
+              cursor: 'pointer',
+              padding: '8px',
+              marginBottom: '4px',
+              display: 'flex',
+              justifyContent: 'space-between',
+              alignItems: 'center',
+              backgroundColor: idx === pageIndex ? '#f0f0f0' : 'transparent',
+              borderRadius: '4px',
+              transition: 'background-color .2s'
+            }}
+          >
+            <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+              <div style={{
+                width: idx === pageIndex ? '6px' : '4px',
+                height: '55px',
+                backgroundColor: item.color,
+                borderRadius: '4px',
+                transition: 'width .2s'
+              }} />
+              <div style={{
+                fontWeight: idx === pageIndex ? 700 : 600,
+                fontSize: '16px',
+                color: idx === pageIndex ? item.color : '#252525'
+              }}>
+                {item.label}
+              </div>
+            </div>
+            <div style={{
               width: '16px',
               height: '16px',
-              border: '4px solid #BD6697',
+              border: `${idx === pageIndex ? '4px' : '2px'} solid ${idx === pageIndex ? item.color : '#767676'}`,
               borderRadius: '50%',
-            }}
-          ></div>
-        </div>
-
-        {/* Extra Buttons */}
-        {showExtraButtons && (
-          <>
-            <div
-              style={{
-                height: '80px',
-                padding: '16px',
-                borderRadius: '4px',
-                border: '1px solid #dee2e6',
-                display: 'flex',
-                justifyContent: 'space-between',
-                alignItems: 'center',
-              }}
-            >
-              <div className="d-flex align-items-center" style={{ gap: '10px' }}>
-                <div
-                  style={{
-                    width: '4px',
-                    height: '40px',
-                    backgroundColor: '#67BC46',
-                  }}
-                ></div>
-                <div
-                  style={{
-                    fontWeight: 600,
-                    fontSize: '16px',
-                    color: '#252525',
-                  }}
-                >
-                  The Critical Periods Tab
-                </div>
-              </div>
-              <div
-                style={{
-                  width: '16px',
-                  height: '16px',
-                  border: '4px solid #67BC46',
-                  borderRadius: '50%',
-                }}
-              ></div>
-            </div>
-
-            <div
-              style={{
-                height: '80px',
-                padding: '16px',
-                borderRadius: '4px',
-                border: '1px solid #dee2e6',
-                display: 'flex',
-                justifyContent: 'space-between',
-                alignItems: 'center',
-              }}
-            >
-              <div className="d-flex align-items-center" style={{ gap: '10px' }}>
-                <div
-                  style={{
-                    width: '4px',
-                    height: '40px',
-                    backgroundColor: '#F89B1B',
-                  }}
-                ></div>
-                <div
-                  style={{
-                    fontWeight: 600,
-                    fontSize: '16px',
-                    color: '#252525',
-                  }}
-                >
-                  The Maternal Lifestyle Tab
-                </div>
-              </div>
-              <div
-                style={{
-                  width: '16px',
-                  height: '16px',
-                  border: '4px solid #F89B1B',
-                  borderRadius: '50%',
-                }}
-              ></div>
-            </div>
-          </>
-        )}
+              // opacity: idx === pageIndex ? 1 : 0.3,
+              transition: 'opacity .2s'
+            }} />
+          </div>
+        ))}
       </div>
 
       {/* MY NOTES Button */}
@@ -153,8 +86,7 @@ const LeftPanel = ({ showExtraButtons }) => {
           height: '40px',
           borderRadius: '4px',
           border: '1px solid #D4D4D4',
-          padding: '8px 16px',
-          backgroundColor: '#FFFFFF',
+          backgroundColor: '#FFF',
           color: '#454545',
           fontWeight: 500,
           fontSize: '16px',
@@ -162,89 +94,80 @@ const LeftPanel = ({ showExtraButtons }) => {
           alignItems: 'center',
           justifyContent: 'center',
           gap: '5px',
-          marginLeft: '10px',
         }}
       >
-        <span className="material-icons" style={{ color: '#22242C' }}>
-          edit_note
-        </span>
+        <span className="material-icons" style={{ color: '#22242C' }}>edit_note</span>
         MY NOTES
       </button>
 
+      {/* Notes Popup */}
       {showNotesPopup && (
-        <div
-          style={{
-            position: 'absolute',
-            bottom: '137px',
-            left: '4px',
-            width: '236px',
-            height: '210px',
-            backgroundColor: '#FFFFFF',
-            border: '1px solid #D4D4D4',
-            borderRadius: '8px',
-            padding: '16px',
-            boxShadow: '0px 2px 6px rgba(0,0,0,0.1)',
-            zIndex: 10,
-            boxSizing: 'border-box',
-          }}
-        >
+        <div style={{
+          position: 'absolute',
+          top: '210px',
+          left: '10px',
+          width: '236px',
+          height: '210px',
+          backgroundColor: '#FFF',
+          border: '1px solid #D4D4D4',
+          borderRadius: '8px',
+          padding: '16px',
+          boxShadow: '0px 2px 6px rgba(0,0,0,0.1)',
+          zIndex: 10,
+          boxSizing: 'border-box',
+        }}>
+          {/* header */}
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-            <div className="d-flex align-items-center" style={{ gap: '8px', fontWeight: 600 }}>
-              <span className="material-icons" style={{ color: '#22242C' }}>
-                edit_note
-              </span>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '8px', fontWeight: 600 }}>
+              <span className="material-icons" style={{ color: '#22242C' }}>edit_note</span>
               MY NOTES
             </div>
             <span
               className="material-icons"
               style={{ cursor: 'pointer', color: '#777' }}
               onClick={() => setShowNotesPopup(false)}
-            >
-              close
-            </span>
+            >close</span>
           </div>
-
-          <div
-            style={{
-              display: 'flex',
-              justifyContent: 'space-between',
-              marginTop: '32px',
-              paddingBottom: '4px',
-            }}
-          >
-            {['All', 'Notes', 'Highlights'].map((tab) => (
+          {/* tabs All/Notes/Highlights */}
+          <div style={{
+            display: 'flex',
+            justifyContent: 'space-between',
+            marginTop: '32px',
+            paddingBottom: '4px',
+          }}>
+            {['All', 'Notes', 'Highlights'].map(t => (
               <div
-                key={tab}
-                onClick={() => setSelectedTab(tab)}
+                key={t}
+                onClick={() => setSelectedTab(t)}
                 style={{
                   fontWeight: 500,
                   fontSize: '14px',
                   cursor: 'pointer',
                   position: 'relative',
                   paddingBottom: '4px',
-                  color: selectedTab === tab ? '#007BFF' : '#555',
+                  color: selectedTab === t ? '#007BFF' : '#555',
                 }}
               >
-                {tab}
-                {selectedTab === tab && (
-                  <div
-                    style={{
-                      position: 'absolute',
-                      bottom: '-1px',
-                      left: 0,
-                      width: '100%',
-                      height: '2px',
-                      backgroundColor: '#007BFF',
-                      borderRadius: '1px',
-                    }}
-                  />
+                {t}
+                {selectedTab === t && (
+                  <div style={{
+                    position: 'absolute',
+                    bottom: '-1px',
+                    left: 0,
+                    width: '100%',
+                    height: '2px',
+                    backgroundColor: '#007BFF',
+                    borderRadius: '1px',
+                  }} />
                 )}
               </div>
             ))}
           </div>
-
-          <div style={{ marginTop: '20px', width: '100%', borderBottom: '1px solid #E0E0E0' }}></div>
-
+          <div style={{
+            marginTop: '20px',
+            width: '100%',
+            borderBottom: '1px solid #E0E0E0',
+          }} />
           <button
             onClick={() => setShowNewNotePopup(true)}
             style={{
@@ -253,7 +176,7 @@ const LeftPanel = ({ showExtraButtons }) => {
               height: '40px',
               border: '1px solid #D4D4D4',
               borderRadius: '4px',
-              backgroundColor: '#FFFFFF',
+              backgroundColor: '#FFF',
               fontSize: '14px',
               fontWeight: 500,
               color: '#454545',
@@ -264,22 +187,21 @@ const LeftPanel = ({ showExtraButtons }) => {
         </div>
       )}
 
+      {/* New Note Popup */}
       {showNewNotePopup && (
-        <div
-          style={{
-            position: 'absolute',
-            bottom: '137px',
-            left: '250px',
-            width: '292px',
-            backgroundColor: '#FFFFFF',
-            border: '1px solid #D4D4D4',
-            borderRadius: '8px',
-            padding: '16px',
-            boxShadow: '0px 2px 6px rgba(0,0,0,0.1)',
-            zIndex: 11,
-            boxSizing: 'border-box',
-          }}
-        >
+        <div style={{
+          position: 'absolute',
+          top: '210px',
+          left: '250px',
+          width: '292px',
+          backgroundColor: '#FFF',
+          border: '1px solid #D4D4D4',
+          borderRadius: '8px',
+          padding: '16px',
+          boxShadow: '0px 2px 6px rgba(0,0,0,0.1)',
+          zIndex: 11,
+          boxSizing: 'border-box',
+        }}>
           <span
             className="material-icons"
             onClick={() => setShowNewNotePopup(false)}
@@ -287,70 +209,58 @@ const LeftPanel = ({ showExtraButtons }) => {
               position: 'absolute',
               top: '3px',
               right: '3px',
-              width: '14px',
-              height: '14px',
+              fontSize: '14px',
               color: '#777',
               cursor: 'pointer',
             }}
-          >
-            close
-          </span>
-
-          <div
-            style={{
-              width: '100%',
-              height: '68px',
-              border: '1px solid #D4D4D4',
-              borderRadius: '8px',
-              padding: '12px',
-              boxSizing: 'border-box',
-              display: 'flex',
-              alignItems: 'center',
-              gap: '24px',
-            }}
-          >
-            {['Highlight', 'Take Notes'].map((tab) => (
+          >close</span>
+          <div style={{
+            width: '100%',
+            height: '68px',
+            border: '1px solid #D4D4D4',
+            borderRadius: '8px',
+            padding: '12px',
+            display: 'flex',
+            alignItems: 'center',
+            gap: '24px',
+          }}>
+            {['Highlight', 'Take Notes'].map(t => (
               <div
-                key={tab}
-                onClick={() => setNoteTab(tab)}
+                key={t}
+                onClick={() => setNoteTab(t)}
                 style={{
                   fontSize: '14px',
                   fontWeight: 500,
-                  color: noteTab === tab ? '#007BFF' : '#252525',
+                  color: noteTab === t ? '#007BFF' : '#252525',
                   cursor: 'pointer',
                   position: 'relative',
                   paddingBottom: '4px',
                 }}
               >
-                {tab}
-                {noteTab === tab && (
-                  <div
-                    style={{
-                      position: 'absolute',
-                      bottom: 0,
-                      left: 0,
-                      height: '2px',
-                      width: '100%',
-                      backgroundColor: '#007BFF',
-                      borderRadius: '1px',
-                    }}
-                  />
+                {t}
+                {noteTab === t && (
+                  <div style={{
+                    position: 'absolute',
+                    bottom: 0,
+                    left: 0,
+                    width: '100%',
+                    height: '2px',
+                    backgroundColor: '#007BFF',
+                    borderRadius: '1px',
+                  }} />
                 )}
               </div>
             ))}
           </div>
-
           {noteTab === 'Take Notes' ? (
-            <div
-              style={{
-                height: '276px',
-                border: '1px solid #D4D4D4',
-                borderRadius: '8px',
-                padding: '12px',
-                boxSizing: 'border-box',
-                marginTop: '12px',
-              }}
-            >
+            <div style={{
+              height: '276px',
+              border: '1px solid #D4D4D4',
+              borderRadius: '8px',
+              padding: '12px',
+              marginTop: '12px',
+              boxSizing: 'border-box',
+            }}>
               <textarea
                 style={{
                   width: '100%',
@@ -365,21 +275,18 @@ const LeftPanel = ({ showExtraButtons }) => {
               />
             </div>
           ) : (
-            <div
-              style={{
-                width: '292px',
-                height: '52px',
-                border: '1px solid #D4D4D4',
-                borderRadius: '8px',
-                padding: '12px',
-                boxSizing: 'border-box',
-                marginTop: '12px',
-                display: 'flex',
-                justifyContent: 'space-between',
-                alignItems: 'center',
-              }}
-            >
-              {['NONE', '#BD6697', '#67BC46', '#F89B1B', '#009FDA'].map((color) => (
+            <div style={{
+              width: '292px',
+              height: '52px',
+              border: '1px solid #D4D4D4',
+              borderRadius: '8px',
+              padding: '12px',
+              marginTop: '12px',
+              display: 'flex',
+              justifyContent: 'space-between',
+              alignItems: 'center',
+            }}>
+              {['NONE', '#BD6697', '#67BC46', '#F89B1B', '#009FDA'].map(color => (
                 <div
                   key={color}
                   onClick={() => setSelectedHighlightColor(color)}
@@ -390,14 +297,13 @@ const LeftPanel = ({ showExtraButtons }) => {
                     border: selectedHighlightColor === color ? '2px solid #007BFF' : '1px solid #D4D4D4',
                     backgroundColor: color === 'NONE' ? 'transparent' : color,
                     cursor: 'pointer',
-                    boxSizing: 'border-box',
                     display: 'flex',
                     alignItems: 'center',
                     justifyContent: 'center',
                     fontSize: '12px',
                     color: '#555',
                   }}
-                  title={color === 'NONE' ? 'NONE' : color}
+                  title={color}
                 >
                   {color === 'NONE' && 'NONE'}
                 </div>
