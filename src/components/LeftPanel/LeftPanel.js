@@ -1,4 +1,3 @@
-// src/components/LeftPanel/LeftPanel.jsx
 import React, { useState } from 'react';
 import { LEFT_CONFIG } from '../../data/LEFT_CONFIG';
 

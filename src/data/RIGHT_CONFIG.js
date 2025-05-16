@@ -4,24 +4,35 @@ import image from '../Assets/svg/Image.svg';
 
 export const RIGHT_CONFIG = {
     main: {
-        contentTitle: [],
+        contentTitle: [""],
         questionAnswer: [
             {
                 type: 'video',
-                title: 'video',
+                title: 'To answer the questions, you will Investigate the Evidence I have collected from the life of Catarina. But before you Investigate the Evidence, take some time to Consult the Research I’ve collated for you.',
                 content: {
                     video: "/videos/psych_post_divorce_adjustment.mp4"
-                }
-            }],
+                },
+                showScript: true
+            }
+        ],
         script: "Hi, I’m Dr. Mathilde Feldman. … (main tab script content here)",
         showVideoPage: true,
     },
     tab2: {
         contentTitle: [
+            "",
             "Read the Research artifacts and collect notes, and evidence. You can highlight and save anything you think is evidence worthy for your reference when you get to the make a decision tab.",
             "Read the Research artifacts and collect notes, and evidence. You can highlight and save anything you think is evidence worthy for your reference when you get to the make a decision tab.",
         ],
         questionAnswer: [
+            {
+                type: 'video',
+                title: 'To answer the questions, you will Investigate the Evidence I have collected from the life of Catarina. But before you Investigate the Evidence, take some time to Consult the Research I’ve collated for you.',
+                content: {
+                    video: "/videos/psych_post_divorce_adjustment.mp4"
+                },
+                showScript: true
+            },
             {
                 faqs: [
                     {

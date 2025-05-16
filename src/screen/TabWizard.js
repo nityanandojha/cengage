@@ -7,10 +7,10 @@ import './style.css';
 const TABS = ['main', 'tab2', 'tab3', 'tab4'];
 
 const TabWizard = ({ onTabChange }) => {
-  const [tabIdx, setTabIdx]       = useState(0);
+  const [tabIdx, setTabIdx] = useState(0);
   const [pageIndex, setPageIndex] = useState(0);
-  const currentTab                = TABS[tabIdx];
-  const pages                     = RIGHT_CONFIG[currentTab]?.contentPages || [];
+  const currentTab = TABS[tabIdx];
+  const pages = RIGHT_CONFIG[currentTab]?.contentPages || [];
 
   // Reset pageIndex & notify App.js when the tab key changes
   useEffect(() => {
@@ -37,7 +37,7 @@ const TabWizard = ({ onTabChange }) => {
           pageIndex={pageIndex}
           onPageChange={setPageIndex}
           showVideoPage={currentTab === 'main'}
-          onStart={() => {}}
+          onStart={() => { }}
           onFinishTab={() => {
             if (pageIndex < pages.length - 1) {
               // advance within this tab
@@ -61,5 +61,4 @@ const TabWizard = ({ onTabChange }) => {
     </div>
   );
 };
-
 export default TabWizard;
