@@ -15,21 +15,16 @@ const RightPanel = ({
   const config = RIGHT_CONFIG[tab] || RIGHT_CONFIG.main;
   const { contentTitle, script, questionAnswer } = config;
 
-  // Video-ended state
   const [videoEnded, setVideoEnded] = useState(false);
-  // Highlighter states
   const [highlightedText, setHighlightedText] = useState('');
   const [showNewNotePopup, setShowNewNotePopup] = useState(false);
   const [noteTab, setNoteTab] = useState('Highlight');
   const [selectedHighlightColor, setSelectedHighlightColor] = useState('');
 
-
-  // Reset videoEnded when tab changes
   useEffect(() => {
     setVideoEnded(false);
   }, [tab]);
 
-  // Listen for text selection
   useEffect(() => {
     const handleMouseUp = () => {
       const selection = window.getSelection();
@@ -52,7 +47,6 @@ const RightPanel = ({
     );
   };
 
-  // Navigation handlers
   const handleNext = () => {
     if (pageIndex < contentTitle.length - 1) {
       onPageChange(pageIndex + 1);
@@ -97,9 +91,6 @@ const RightPanel = ({
 
       {/* Title */}
       {contentTitle[pageIndex] && (
-        // <p style={{ color: '#22242C', fontSize: '15px', width: '95%' }}>
-        //   {contentTitle[pageIndex]}
-        // </p>
         <p
           style={{ color: '#22242C', fontSize: '15px', width: '95%' }}
           dangerouslySetInnerHTML={{
@@ -133,9 +124,6 @@ const RightPanel = ({
                 aria-labelledby="headingOne"
                 data-bs-parent="#scriptAccordion"
               >
-                {/* <div className="accordion-body" style={{ height: 'auto', overflowY: 'auto' }}>
-                  {script}
-                </div> */}
                 <div
                   className="accordion-body"
                   style={{ height: 'auto', overflowY: 'auto' }}
@@ -179,9 +167,6 @@ const RightPanel = ({
                     Your browser does not support the video tag.
                   </video>
                 </div>
-                {/* <p style={{ maxWidth: '100%', color: '#444', fontSize: 15, padding: '16px 0' }}>
-                  {qa.title}
-                </p> */}
                 <p
                   key={qa}
                   style={{ maxWidth: '100%', color: '#444', fontSize: 15, padding: '16px 0' }}
@@ -189,12 +174,6 @@ const RightPanel = ({
                     __html: applyHighlight(qa.title, highlightedText, selectedHighlightColor),
                   }}
                 />
-                {/* <p style={{ maxWidth: '100%', color: '#444', fontSize: 15, padding: '16px 0' }}>
-                  To answer the questions, you will <strong>Investigate the Evidence</strong> I have collected
-                  from the life of Catarina. But before you <strong>Investigate the Evidence</strong>, take some
-                  time to <strong>Consult the Research</strong> I’ve collated for you.
-                </p> */}
-
               </div>
             );
           }
@@ -228,17 +207,6 @@ const RightPanel = ({
                     data-bs-parent=""
                   >
                     <div className="accordion-body" style={{ height: 'auto', overflowY: 'auto' }}>
-                      {/* <div
-                        style={{ color: '#22242C', fontSize: '15px', lineHeight: '20px' }}
-                        dangerouslySetInnerHTML={{
-                          __html: highlightedText
-                            ? faq.answer.replace(
-                              new RegExp(highlightedText, 'g'),
-                              `<span style="background-color: ${selectedHighlightColor}; border-radius:4px; padding:2px;">${highlightedText}</span>`
-                            )
-                            : faq.answer,
-                        }}
-                      /> */}
                       <div
                         style={{ color: '#22242C', fontSize: '15px', lineHeight: '20px' }}
                         dangerouslySetInnerHTML={{
@@ -257,9 +225,6 @@ const RightPanel = ({
             return (
               <ul style={{ marginBottom: 20 }}>
                 {qa.unorderOption.map((item, idx) => (
-                  // <li key={idx} style={{ marginBottom: 10 }}>
-                  //   {item.opt}
-                  // </li>
                   <li
                     key={idx}
                     style={{ marginBottom: 10 }}
@@ -267,7 +232,6 @@ const RightPanel = ({
                       __html: applyHighlight(item.opt, highlightedText, selectedHighlightColor),
                     }}
                   />
-
                 ))}
               </ul>
             );
@@ -278,9 +242,6 @@ const RightPanel = ({
             return (
               <div style={{ marginBottom: 20 }}>
                 {qa.notes.map((item, idx) => (
-                  // <p key={idx} style={{ fontSize: 16, fontWeight: 400, color: '#22242C' }}>
-                  //   {item.opt}
-                  // </p>
                   <p
                     key={idx}
                     style={{ fontSize: 16, fontWeight: 400, color: '#22242C' }}

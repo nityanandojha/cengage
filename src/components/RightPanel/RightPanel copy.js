@@ -3,6 +3,7 @@ import { RIGHT_CONFIG } from '../../data/RIGHT_CONFIG';
 import { LEFT_CONFIG } from '../../data/LEFT_CONFIG';
 import { Button } from 'react-bootstrap';
 import ChartCard from '../ChartCard';
+import { hightLightColor } from '../../data/HighlightColor';
 
 const RightPanel = ({
   tab,
@@ -12,18 +13,44 @@ const RightPanel = ({
   onPageChange,
 }) => {
   const config = RIGHT_CONFIG[tab] || RIGHT_CONFIG.main;
-  const {
-    contentTitle,
-    script,
-    questionAnswer,
-  } = config;
+  const { contentTitle, script, questionAnswer } = config;
 
+  // Video-ended state
   const [videoEnded, setVideoEnded] = useState(false);
+  // Highlighter states
+  const [highlightedText, setHighlightedText] = useState('');
+  const [showNewNotePopup, setShowNewNotePopup] = useState(false);
+  const [noteTab, setNoteTab] = useState('Highlight');
+  const [selectedHighlightColor, setSelectedHighlightColor] = useState('');
 
-  // Reset videoEnded when switching tabs
+
+  // Reset videoEnded when tab changes
   useEffect(() => {
     setVideoEnded(false);
   }, [tab]);
+
+  // Listen for text selection
+  useEffect(() => {
+    const handleMouseUp = () => {
+      const selection = window.getSelection();
+      const text = selection?.toString();
+      if (text) {
+        setHighlightedText(text);
+        setShowNewNotePopup(true);
+      }
+    };
+    document.addEventListener('mouseup', handleMouseUp);
+    return () => document.removeEventListener('mouseup', handleMouseUp);
+  }, []);
+
+  const applyHighlight = (text, highlight, color) => {
+    if (!highlight || !text) return text;
+    const escaped = highlight.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+    return text.replace(
+      new RegExp(escaped, 'gi'),
+      (match) => `<span style="background-color: ${color}; border-radius:4px; padding:2px;">${match}</span>`
+    );
+  };
 
   // Navigation handlers
   const handleNext = () => {
@@ -33,7 +60,6 @@ const RightPanel = ({
       onFinishTab();
     }
   };
-
   const handlePrev = () => {
     if (pageIndex > 0) {
       onPageChange(pageIndex - 1);
@@ -44,9 +70,7 @@ const RightPanel = ({
 
   const primary = (LEFT_CONFIG[tab] || LEFT_CONFIG.main).primary;
   const current = primary[pageIndex] || primary[0];
-
   const qa = questionAnswer[pageIndex] || {};
-
   const isMainTab = tab === 'main';
   const isLastPageOfTab4 = tab === 'tab4' && pageIndex === questionAnswer.length - 1;
 
@@ -66,26 +90,29 @@ const RightPanel = ({
         gap: '3px',
       }}
     >
-      {/* Dynamic Header */}
+      {/* Header */}
       <h5 style={{ fontWeight: 600, color: '#000', width: '95%' }}>
         {current.label}
       </h5>
 
-      {/* Content Title */}
+      {/* Title */}
       {contentTitle[pageIndex] && (
-        <p style={{ color: '#22242C', fontSize: '15px', width: '95%' }}>
-          {contentTitle[pageIndex]}
-        </p>
+        // <p style={{ color: '#22242C', fontSize: '15px', width: '95%' }}>
+        //   {contentTitle[pageIndex]}
+        // </p>
+        <p
+          style={{ color: '#22242C', fontSize: '15px', width: '95%' }}
+          dangerouslySetInnerHTML={{
+            __html: applyHighlight(contentTitle[pageIndex], highlightedText, selectedHighlightColor),
+          }}
+        />
+
       )}
 
       {/* Script Accordion */}
       {script && qa.showScript && (
         <div style={{ position: 'absolute', top: 10, right: 20 }}>
-          <div
-            className="accordion"
-            id="scriptAccordion"
-            style={{ width: 255, borderRadius: 4, overflow: 'hidden' }}
-          >
+          <div className="accordion" id="scriptAccordion" style={{ width: 255, borderRadius: 4, overflow: 'hidden' }}>
             <div className="accordion-item">
               <h2 className="accordion-header" id="headingOne">
                 <button
@@ -106,19 +133,23 @@ const RightPanel = ({
                 aria-labelledby="headingOne"
                 data-bs-parent="#scriptAccordion"
               >
+                {/* <div className="accordion-body" style={{ height: 'auto', overflowY: 'auto' }}>
+                  {script}
+                </div> */}
                 <div
                   className="accordion-body"
                   style={{ height: 'auto', overflowY: 'auto' }}
-                >
-                  {script}
-                </div>
+                  dangerouslySetInnerHTML={{
+                    __html: applyHighlight(script, highlightedText, selectedHighlightColor),
+                  }}
+                />
               </div>
             </div>
           </div>
         </div>
       )}
 
-      {/* Main Content (Video, FAQs, Charts, Images, etc.) */}
+      {/* Main Content */}
       <div style={{ width: '72%', marginTop: script ? 10 : 0, overflowY: 'auto' }}>
         {(() => {
           // Video
@@ -148,16 +179,27 @@ const RightPanel = ({
                     Your browser does not support the video tag.
                   </video>
                 </div>
-                <p style={{ maxWidth: '100%', color: '#444', fontSize: 15, padding: '16px 0' }}>
+                {/* <p style={{ maxWidth: '100%', color: '#444', fontSize: 15, padding: '16px 0' }}>
+                  {qa.title}
+                </p> */}
+                <p
+                  key={qa}
+                  style={{ maxWidth: '100%', color: '#444', fontSize: 15, padding: '16px 0' }}
+                  dangerouslySetInnerHTML={{
+                    __html: applyHighlight(qa.title, highlightedText, selectedHighlightColor),
+                  }}
+                />
+                {/* <p style={{ maxWidth: '100%', color: '#444', fontSize: 15, padding: '16px 0' }}>
                   To answer the questions, you will <strong>Investigate the Evidence</strong> I have collected
                   from the life of Catarina. But before you <strong>Investigate the Evidence</strong>, take some
                   time to <strong>Consult the Research</strong> I’ve collated for you.
-                </p>
+                </p> */}
+
               </div>
             );
           }
 
-          // FAQs
+          // FAQs with Highlight
           if (qa.faqs) {
             return qa.faqs.map((faq, i) => (
               <div
@@ -186,9 +228,23 @@ const RightPanel = ({
                     data-bs-parent=""
                   >
                     <div className="accordion-body" style={{ height: 'auto', overflowY: 'auto' }}>
-                      <div style={{ color: '#22242C', fontSize: '15px', lineHeight: '20px' }}>
-                        {faq.answer}
-                      </div>
+                      {/* <div
+                        style={{ color: '#22242C', fontSize: '15px', lineHeight: '20px' }}
+                        dangerouslySetInnerHTML={{
+                          __html: highlightedText
+                            ? faq.answer.replace(
+                              new RegExp(highlightedText, 'g'),
+                              `<span style="background-color: ${selectedHighlightColor}; border-radius:4px; padding:2px;">${highlightedText}</span>`
+                            )
+                            : faq.answer,
+                        }}
+                      /> */}
+                      <div
+                        style={{ color: '#22242C', fontSize: '15px', lineHeight: '20px' }}
+                        dangerouslySetInnerHTML={{
+                          __html: applyHighlight(faq.answer, highlightedText, selectedHighlightColor),
+                        }}
+                      />
                     </div>
                   </div>
                 </div>
@@ -196,26 +252,54 @@ const RightPanel = ({
             ));
           }
 
-          // Unordered options
+          // Unordered Options
           if (qa.unorderOption) {
             return (
               <ul style={{ marginBottom: 20 }}>
                 {qa.unorderOption.map((item, idx) => (
-                  <li key={idx} style={{ marginBottom: 10 }}>{item.opt}</li>
+                  // <li key={idx} style={{ marginBottom: 10 }}>
+                  //   {item.opt}
+                  // </li>
+                  <li
+                    key={idx}
+                    style={{ marginBottom: 10 }}
+                    dangerouslySetInnerHTML={{
+                      __html: applyHighlight(item.opt, highlightedText, selectedHighlightColor),
+                    }}
+                  />
                 ))}
               </ul>
             );
           }
 
-          // Notes + Export button
+          // Notes + Export
           if (qa.notes) {
             return (
               <div style={{ marginBottom: 20 }}>
                 {qa.notes.map((item, idx) => (
-                  <p key={idx} style={{ fontSize: 16, fontWeight: 400, color: '#22242C' }}>{item.opt}</p>
+                  // <p key={idx} style={{ fontSize: 16, fontWeight: 400, color: '#22242C' }}>
+                  //   {item.opt}
+                  // </p>
+                  <p
+                    key={idx}
+                    style={{ fontSize: 16, fontWeight: 400, color: '#22242C' }}
+                    dangerouslySetInnerHTML={{
+                      __html: applyHighlight(item.opt, highlightedText, selectedHighlightColor),
+                    }}
+                  />
+
                 ))}
                 <Button
-                  style={{ height: 40, borderRadius: 4, fontWeight: 500, fontSize: 15, textTransform: 'uppercase', backgroundColor: '#009FDA', borderColor: '#009FDA', marginTop: 20 }}
+                  style={{
+                    height: 40,
+                    borderRadius: 4,
+                    fontWeight: 500,
+                    fontSize: 15,
+                    textTransform: 'uppercase',
+                    backgroundColor: '#009FDA',
+                    borderColor: '#009FDA',
+                    marginTop: 20,
+                  }}
                 >
                   Export MY Notes
                 </Button>
@@ -226,7 +310,11 @@ const RightPanel = ({
           // Screenshots
           const widthMap = { doctorNote: '65%', textMessage: '50%', image: '50%' };
           if (widthMap[qa.type]) {
-            const altMap = { doctorNote: 'Email screenshot', textMessage: 'Text message screenshot', image: 'Image' };
+            const altMap = {
+              doctorNote: 'Email screenshot',
+              textMessage: 'Text message screenshot',
+              image: 'Image',
+            };
             return (
               <div key={pageIndex} style={{ marginBottom: 20 }}>
                 <img
@@ -240,9 +328,7 @@ const RightPanel = ({
 
           // Chart
           if (qa.type === 'chart') {
-            const {
-              labels, series, metric, subtext
-            } = qa.content;
+            const { labels, series, metric, subtext } = qa.content;
             return (
               <div key={pageIndex} style={{ marginBottom: 20, width: '550px' }}>
                 <ChartCard
@@ -252,7 +338,7 @@ const RightPanel = ({
                   metric={metric}
                   subtext={subtext}
                   period="This Week"
-                  periods={["This Week", "Last Week"]}
+                  periods={['This Week', 'Last Week']}
                   onPeriodChange={(p) => console.log('Period →', p)}
                 />
               </div>
@@ -262,6 +348,136 @@ const RightPanel = ({
           return null;
         })()}
       </div>
+
+      {/* Highlighter / Notes Popup */}
+      {showNewNotePopup && (
+        <div
+          style={{
+            position: 'absolute',
+            top: '210px',
+            left: '290px',
+            width: '292px',
+            backgroundColor: '#FFF',
+            border: '1px solid #D4D4D4',
+            borderRadius: '8px',
+            padding: '16px',
+            boxShadow: '0px 2px 6px rgba(0,0,0,0.1)',
+            zIndex: 11,
+            boxSizing: 'border-box',
+          }}
+        >
+          <div style={{ display: 'flex', justifyContent: 'flex-end' }}>
+            <span
+              className="material-icons"
+              onClick={() => setShowNewNotePopup(false)}
+              style={{ fontSize: '20px', color: '#777', cursor: 'pointer', paddingBottom: '6px' }}
+            >
+              close
+            </span>
+          </div>
+
+          <div
+            style={{
+              width: '100%',
+              height: '68px',
+              border: '1px solid #D4D4D4',
+              borderRadius: '8px',
+              padding: '12px',
+              display: 'flex',
+              alignItems: 'center',
+              gap: '24px',
+            }}
+          >
+            {['Highlight', 'Take Notes'].map((t) => (
+              <div
+                key={t}
+                onClick={() => setNoteTab(t)}
+                style={{
+                  fontSize: '14px',
+                  fontWeight: 500,
+                  color: noteTab === t ? '#007BFF' : '#252525',
+                  cursor: 'pointer',
+                  position: 'relative',
+                  paddingBottom: '4px',
+                }}
+              >
+                {t}
+                {noteTab === t && (
+                  <div
+                    style={{
+                      position: 'absolute',
+                      bottom: 0,
+                      left: 0,
+                      width: '100%',
+                      height: '2px',
+                      backgroundColor: '#007BFF',
+                      borderRadius: '1px',
+                    }}
+                  />
+                )}
+              </div>
+            ))}
+          </div>
+
+          {noteTab === 'Take Notes' ? (
+            <textarea
+              style={{
+                width: '100%',
+                height: '230px',
+                marginTop: '12px',
+                padding: '12px',
+                border: '1px solid #D4D4D4',
+                borderRadius: '8px',
+                fontSize: '14px',
+                fontFamily: 'inherit',
+                outline: 'none',
+                resize: 'none',
+              }}
+              placeholder="Write your note here..."
+            />
+          ) : (
+            <div
+              style={{
+                height: '52px',
+                border: '1px solid #D4D4D4',
+                borderRadius: '8px',
+                padding: '12px',
+                marginTop: '12px',
+                display: 'flex',
+                justifyContent: 'space-between',
+                alignItems: 'center',
+              }}
+            >
+              {/* {['NONE', '#BD6697', '#67BC46', '#F89B1B', '#009FDA'].map((color) => ( */}
+              {hightLightColor.map((item) => (
+                < div
+                  key={item.colorValue}
+                  onClick={() => {
+                    setSelectedHighlightColor(item.colorValue);
+                    setShowNewNotePopup(false);
+                  }}
+                  style={{
+                    width: item.color === 'NONE' ? '55px' : '27px',
+                    height: '27px',
+                    borderRadius: '4px',
+                    border: selectedHighlightColor === item.color ? '2px solid #007BFF' : '1px solid #D4D4D4',
+                    backgroundColor: item.color === 'NONE' ? 'transparent' : item.color,
+                    cursor: 'pointer',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    fontSize: '12px',
+                    color: '#555',
+                  }}
+                >
+                  {item.color === 'NONE' && 'NONE'}
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
+      )
+      }
 
       {
         isMainTab ?
@@ -288,25 +504,51 @@ const RightPanel = ({
             </Button>
           )
           :
-          // Navigation 
-          <div className="d-flex" style={{ position: 'absolute', bottom: 15, gap: 10, width: '100%', justifyContent: 'flex-end', right: 15 }}>
-            <Button variant="secondary" onClick={handlePrev} style={{ width: 115, height: 40, borderRadius: 4, fontWeight: 500, fontSize: 16, textTransform: 'uppercase', backgroundColor: 'transparent', borderColor: '#BDBDBD', color: '#000' }}>
-              ← Back
-            </Button>
-            {
-              !isLastPageOfTab4 && (
+          //  Navigation Buttons
+          (
+            <div
+              className="d-flex"
+              style={{ position: 'absolute', bottom: 15, gap: 10, width: '100%', justifyContent: 'flex-end', right: 15 }}
+            >
+              <Button
+                variant="secondary"
+                onClick={handlePrev}
+                style={{
+                  width: 115,
+                  height: 40,
+                  borderRadius: 4,
+                  fontWeight: 500,
+                  fontSize: 16,
+                  textTransform: 'uppercase',
+                  backgroundColor: 'transparent',
+                  borderColor: '#BDBDBD',
+                  color: '#000',
+                }}
+              >
+                ← Back
+              </Button>
+              {!isLastPageOfTab4 && (
                 <Button
                   variant="secondary"
                   onClick={handleNext}
                   disabled={qa.type === 'video' && !videoEnded}
-                  // disabled={(qa.type === 'video' && !videoEnded) || pageIndex === contentTitle.length - 1}
-                  style={{ width: 115, height: 40, borderRadius: 4, fontWeight: 500, fontSize: 16, textTransform: 'uppercase', backgroundColor: 'transparent', borderColor: '#BDBDBD', color: '#000' }}
+                  style={{
+                    width: 115,
+                    height: 40,
+                    borderRadius: 4,
+                    fontWeight: 500,
+                    fontSize: 16,
+                    textTransform: 'uppercase',
+                    backgroundColor: 'transparent',
+                    borderColor: '#BDBDBD',
+                    color: '#000',
+                  }}
                 >
                   Next →
                 </Button>
-              )
-            }
-          </div>
+              )}
+            </div>
+          )
       }
     </div >
   );
