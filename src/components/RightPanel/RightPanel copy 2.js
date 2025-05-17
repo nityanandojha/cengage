@@ -453,10 +453,7 @@ const RightPanel = ({
               {hightLightColor.map((item) => (
                 < div
                   key={item.colorValue}
-                  onClick={() => {
-                    setSelectedHighlightColor(item.colorValue);
-                    setShowNewNotePopup(false);
-                  }}
+                  onClick={() => setSelectedHighlightColor(item.colorValue)}
                   style={{
                     width: item.color === 'NONE' ? '55px' : '27px',
                     height: '27px',

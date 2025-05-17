@@ -50,10 +50,6 @@ const RightPanel = ({
   const isMainTab = tab === 'main';
   const isLastPageOfTab4 = tab === 'tab4' && pageIndex === questionAnswer.length - 1;
 
-    // #D2DDFE
-  // #67BC463D
-  // #BD66973D
-
   return (
     <div
       className="bg-white border position-relative"
