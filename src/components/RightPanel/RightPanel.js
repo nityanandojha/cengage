@@ -6,64 +6,81 @@ import ChartCard from '../ChartCard';
 
 const RightPanel = ({
   tab,
-  onStart,
   onFinishTab,
   onPrevTab,
-  showVideoPage,
   pageIndex,
   onPageChange,
 }) => {
-  const config = RIGHT_CONFIG[tab] || RIGHT_CONFIG.main
-  const {
-    contentTitle,
-    script,
-    questionAnswer,
-    showVideoPage: configShowVideo = showVideoPage,
-  } = config;
+  const config = RIGHT_CONFIG[tab] || RIGHT_CONFIG.main;
+  const { contentTitle, script, questionAnswer } = config;
 
+  // Video-ended state
   const [videoEnded, setVideoEnded] = useState(false);
-  const [started, setStarted] = useState(false);
+  // Highlighter states
+  const [highlightedText, setHighlightedText] = useState('');
+  const [showNewNotePopup, setShowNewNotePopup] = useState(false);
+  const [noteTab, setNoteTab] = useState('Highlight');
+  const [selectedHighlightColor, setSelectedHighlightColor] = useState('');
+  const [popupPosition, setPopupPosition] = useState({ top: 0, left: 0 });
 
+
+  // Reset videoEnded when tab changes
   useEffect(() => {
     setVideoEnded(false);
-    setStarted(!configShowVideo);
-  }, [tab, configShowVideo]);
+  }, [tab]);
 
+  // Listen for text selection
   useEffect(() => {
-    if (
-      started &&
-      contentTitle.length > 0 &&
-      pageIndex === contentTitle.length - 1
-    ) {
-      const timer = setTimeout(() => onFinishTab(), 1500);
-      return () => clearTimeout(timer);
-    }
-  }, [started, pageIndex, contentTitle.length, onFinishTab]);
+    const handleMouseUp = () => {
+      const selection = window.getSelection();
+      const text = selection?.toString();
+      if (text) {
+        setHighlightedText(text);
+        setShowNewNotePopup(true);
+      }
+    };
+    document.addEventListener('mouseup', handleMouseUp);
+    return () => document.removeEventListener('mouseup', handleMouseUp);
+  }, []);
 
-  // 5) Handlers
-  const handleStartClick = () => {
-    onStart();
-    if (contentTitle.length === 0) {
-      onFinishTab();
-    } else {
-      setStarted(true);
-    }
+  // useEffect(() => {
+  //   const handleMouseUp = () => {
+  //     const selection = window.getSelection();
+  //     const text = selection?.toString();
+  //     if (text) {
+  //       const range = selection.getRangeAt(0);
+  //       const rect = range.getBoundingClientRect();
+  //       const top = rect.top + window.scrollY;
+  //       const left = rect.left + window.scrollX;
+  //       setHighlightedText(text);
+  //       setShowNewNotePopup(true);
+  //       setPopupPosition({ top, left }); // 👈 Add this
+  //     }
+  //   };
+  //   document.addEventListener('mouseup', handleMouseUp);
+  //   return () => document.removeEventListener('mouseup', handleMouseUp);
+  // }, []);
+
+  const applyHighlight = (text, highlight, color) => {
+    if (!highlight || !text) return text;
+    const escaped = highlight.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+    return text.replace(
+      new RegExp(escaped, 'gi'),
+      (match) => `<span style="background-color: ${color}; border-radius:4px; padding:2px;">${match}</span>`
+    );
   };
 
+
+  // Navigation handlers
   const handleNext = () => {
-    if (configShowVideo && !started) {
-      handleStartClick();
-    } else if (pageIndex < contentTitle.length - 1) {
+    if (pageIndex < contentTitle.length - 1) {
       onPageChange(pageIndex + 1);
     } else {
       onFinishTab();
     }
   };
-
   const handlePrev = () => {
-    if (configShowVideo && pageIndex === 0) {
-      setStarted(false);
-    } else if (pageIndex > 0) {
+    if (pageIndex > 0) {
       onPageChange(pageIndex - 1);
     } else if (onPrevTab) {
       onPrevTab();
@@ -72,8 +89,9 @@ const RightPanel = ({
 
   const primary = (LEFT_CONFIG[tab] || LEFT_CONFIG.main).primary;
   const current = primary[pageIndex] || primary[0];
-
-  const questionAnswerSection = RIGHT_CONFIG[tab]?.questionAnswer ?? [];
+  const qa = questionAnswer[pageIndex] || {};
+  const isMainTab = tab === 'main';
+  const isLastPageOfTab4 = tab === 'tab4' && pageIndex === questionAnswer.length - 1;
 
   return (
     <div
@@ -88,30 +106,32 @@ const RightPanel = ({
         display: 'flex',
         flexDirection: 'column',
         top: '6px',
-        gap: '3px'
+        gap: '3px',
       }}
     >
-      {/* Dynamic Header */}
+      {/* Header */}
       <h5 style={{ fontWeight: 600, color: '#000', width: '95%' }}>
         {current.label}
       </h5>
 
-      {
-        started && contentTitle && contentTitle[pageIndex] && (
-          <p style={{ color: '#22242C', fontSize: '15px', width: '95%' }}>
-            {contentTitle[pageIndex]}
-          </p>
-        )
-      }
+      {/* Title */}
+      {contentTitle[pageIndex] && (
+        // <p style={{ color: '#22242C', fontSize: '15px', width: '95%' }}>
+        //   {contentTitle[pageIndex]}
+        // </p>
+        <p
+          style={{ color: '#22242C', fontSize: '15px', width: '95%' }}
+          dangerouslySetInnerHTML={{
+            __html: applyHighlight(contentTitle[pageIndex], highlightedText, selectedHighlightColor),
+          }}
+        />
 
-      {/* Optional Script Accordion */}
-      {!started && configShowVideo && script && (
+      )}
+
+      {/* Script Accordion */}
+      {script && qa.showScript && (
         <div style={{ position: 'absolute', top: 10, right: 20 }}>
-          <div
-            className="accordion"
-            id="scriptAccordion"
-            style={{ width: 250, borderRadius: 4, overflow: 'hidden' }}
-          >
+          <div className="accordion" id="scriptAccordion" style={{ width: 255, borderRadius: 4, overflow: 'hidden' }}>
             <div className="accordion-item">
               <h2 className="accordion-header" id="headingOne">
                 <button
@@ -132,261 +152,420 @@ const RightPanel = ({
                 aria-labelledby="headingOne"
                 data-bs-parent="#scriptAccordion"
               >
-                <div className="accordion-body" style={{ height: 'auto', overflowY: 'auto' }}>
+                {/* <div className="accordion-body" style={{ height: 'auto', overflowY: 'auto' }}>
                   {script}
-                </div>
+                </div> */}
+                <div
+                  className="accordion-body"
+                  style={{ height: 'auto', overflowY: 'auto' }}
+                  dangerouslySetInnerHTML={{
+                    __html: applyHighlight(script, highlightedText, selectedHighlightColor),
+                  }}
+                />
               </div>
             </div>
           </div>
         </div>
       )}
 
-      {/* Video (pre-start on video tabs) */}
-      {!started && configShowVideo && (
-        <div
-          className="d-flex align-items-center justify-content-center"
-          style={{
-            width: '70%',
-            height: 260,
-            borderRadius: 4,
-            border: '0.75px solid #ccc',
-            backgroundColor: '#f9f9f9',
-            padding: '35px 136px'
-          }}
-        >
-          <video
-            width={472}
-            height={260}
-            controls
-            style={{ borderRadius: 4 }}
-            onEnded={() => setVideoEnded(true)}
-          >
-            <source
-              src="/videos/psych_post_divorce_adjustment.mp4"
-              type="video/mp4"
-            />
-            Your browser does not support the video tag.
-          </video>
-        </div>
-      )}
-
-      {/* Questions and Answers Accordion */}
-      {started && questionAnswerSection.length > pageIndex && (
-        <div style={{ width: '95%' }}>
-          {(() => {
-            const qa = questionAnswerSection[pageIndex];
-            const accId = `qaAccordion-${pageIndex}`;
-            const headingId = `heading-${pageIndex}`;
-            const collapseId = `collapse-${pageIndex}`;
-
-            if (qa?.faqs) {
-              return qa.faqs.map((faq, subIdx) => (
+      {/* Main Content */}
+      <div style={{ width: '72%', marginTop: script ? 10 : 0, overflowY: 'auto' }}>
+        {(() => {
+          // Video
+          if (qa.type === 'video') {
+            return (
+              <div>
                 <div
-                  key={`${pageIndex}-${subIdx}`}
-                  className="accordion"
-                  id={accId}
-                  style={{ width: '100%', borderRadius: 4, overflow: 'hidden', marginBottom: 10 }}
+                  key={pageIndex}
+                  className="d-flex align-items-center justify-content-center"
+                  style={{
+                    width: '100%',
+                    height: 270,
+                    borderRadius: 4,
+                    border: '0.75px solid #ccc',
+                    backgroundColor: '#f9f9f9',
+                    padding: '16px',
+                  }}
                 >
-                  <div className="accordion-item">
-                    <h2 className="accordion-header" id={`${headingId}-${subIdx}`}>
-                      <button
-                        className="accordion-button collapsed"
-                        type="button"
-                        data-bs-toggle="collapse"
-                        data-bs-target={`#${collapseId}-${subIdx}`}
-                        aria-expanded="false"
-                        aria-controls={`${collapseId}-${subIdx}`}
-                        style={{ width: '100%', height: 56, borderRadius: 4, fontSize: 16, fontWeight: 600 }}
-                      >
-                        {faq.question}
-                      </button>
-                    </h2>
-                    <div
-                      id={`${collapseId}-${subIdx}`}
-                      className="accordion-collapse collapse"
-                      aria-labelledby={`${headingId}-${subIdx}`}
-                      data-bs-parent={`#${accId}`}
+                  <video
+                    width="100%"
+                    height="100%"
+                    controls
+                    style={{ borderRadius: 4, objectFit: 'cover' }}
+                    onEnded={() => setVideoEnded(true)}
+                  >
+                    <source src={qa.content.video} type="video/mp4" />
+                    Your browser does not support the video tag.
+                  </video>
+                </div>
+                {/* <p style={{ maxWidth: '100%', color: '#444', fontSize: 15, padding: '16px 0' }}>
+                  {qa.title}
+                </p> */}
+                <p
+                  key={qa}
+                  style={{ maxWidth: '100%', color: '#444', fontSize: 15, padding: '16px 0' }}
+                  dangerouslySetInnerHTML={{
+                    __html: applyHighlight(qa.title, highlightedText, selectedHighlightColor),
+                  }}
+                />
+                {/* <p style={{ maxWidth: '100%', color: '#444', fontSize: 15, padding: '16px 0' }}>
+                  To answer the questions, you will <strong>Investigate the Evidence</strong> I have collected
+                  from the life of Catarina. But before you <strong>Investigate the Evidence</strong>, take some
+                  time to <strong>Consult the Research</strong> I’ve collated for you.
+                </p> */}
+
+              </div>
+            );
+          }
+
+          // FAQs with Highlight
+          if (qa.faqs) {
+            return qa.faqs.map((faq, i) => (
+              <div
+                key={i}
+                className="accordion"
+                style={{ width: '100%', borderRadius: 4, overflow: 'hidden', marginBottom: 10 }}
+              >
+                <div className="accordion-item">
+                  <h2 className="accordion-header" id={`faqHeading-${i}`}>
+                    <button
+                      className="accordion-button collapsed"
+                      type="button"
+                      data-bs-toggle="collapse"
+                      data-bs-target={`#faqCollapse-${i}`}
+                      aria-expanded="false"
+                      aria-controls={`faqCollapse-${i}`}
+                      style={{ width: '100%', height: 56, borderRadius: 4, fontSize: 16, fontWeight: 600 }}
                     >
-                      <div className="accordion-body" style={{ height: 'auto', overflowY: 'auto' }}>
-                        <div style={{ color: '#22242C', fontSize: '15px', lineHeight: '20px' }}>
-                          {faq.answer}
-                        </div>
-                      </div>
+                      {faq.question}
+                    </button>
+                  </h2>
+                  <div
+                    id={`faqCollapse-${i}`}
+                    className="accordion-collapse collapse"
+                    aria-labelledby={`faqHeading-${i}`}
+                    data-bs-parent=""
+                  >
+                    <div className="accordion-body" style={{ height: 'auto', overflowY: 'auto' }}>
+                      {/* <div
+                        style={{ color: '#22242C', fontSize: '15px', lineHeight: '20px' }}
+                        dangerouslySetInnerHTML={{
+                          __html: highlightedText
+                            ? faq.answer.replace(
+                              new RegExp(highlightedText, 'g'),
+                              `<span style="background-color: ${selectedHighlightColor}; border-radius:4px; padding:2px;">${highlightedText}</span>`
+                            )
+                            : faq.answer,
+                        }}
+                      /> */}
+                      <div
+                        style={{ color: '#22242C', fontSize: '15px', lineHeight: '20px' }}
+                        dangerouslySetInnerHTML={{
+                          __html: applyHighlight(faq.answer, highlightedText, selectedHighlightColor),
+                        }}
+                      />
                     </div>
                   </div>
                 </div>
-              ));
-            }
+              </div>
+            ));
+          }
 
-            if (qa?.unorderOption) {
-              return (
-                <div key={pageIndex} className="accordion-body" style={{ marginBottom: 20 }}>
-                  <ul>
-                    {qa.unorderOption.map((item, i) => (
-                      <li key={i} style={{ marginBottom: 10 }}>{item.opt}</li>
-                    ))}
-                  </ul>
-                </div>
-              );
-            }
-
-            if (qa?.notes) {
-              return (
-                <div key={pageIndex} className="accordion-body" style={{ marginBottom: 20 }}>
-                  {qa.notes.map((item, i) => (
-                    <p key={i} style={{ fontSize: 16, fontWeight: 400, color: '#22242C' }}>
-                      {item.opt}
-                    </p>
-                  ))}
-                  <Button
-                    style={{
-                      height: 40,
-                      borderRadius: 4,
-                      fontWeight: 500,
-                      fontSize: 15,
-                      textTransform: 'uppercase',
-                      backgroundColor: '#009FDA',
-                      borderColor: '#009FDA',
-                      marginTop: 20
+          // Unordered Options
+          if (qa.unorderOption) {
+            return (
+              <ul style={{ marginBottom: 20 }}>
+                {qa.unorderOption.map((item, idx) => (
+                  // <li key={idx} style={{ marginBottom: 10 }}>
+                  //   {item.opt}
+                  // </li>
+                  <li
+                    key={idx}
+                    style={{ marginBottom: 10 }}
+                    dangerouslySetInnerHTML={{
+                      __html: applyHighlight(item.opt, highlightedText, selectedHighlightColor),
                     }}
-                  >
-                    Export MY Notes
-                  </Button>
-                </div>
-              );
-            }
+                  />
 
-            const widthMap = {
-              doctorNote: '60%',
-              textMessage: '45%',
-              image: '45%',
-            };
+                ))}
+              </ul>
+            );
+          }
+
+          // Notes + Export
+          if (qa.notes) {
+            return (
+              <div style={{ marginBottom: 20 }}>
+                {qa.notes.map((item, idx) => (
+                  // <p key={idx} style={{ fontSize: 16, fontWeight: 400, color: '#22242C' }}>
+                  //   {item.opt}
+                  // </p>
+                  <p
+                    key={idx}
+                    style={{ fontSize: 16, fontWeight: 400, color: '#22242C' }}
+                    dangerouslySetInnerHTML={{
+                      __html: applyHighlight(item.opt, highlightedText, selectedHighlightColor),
+                    }}
+                  />
+
+                ))}
+                <Button
+                  style={{
+                    height: 40,
+                    borderRadius: 4,
+                    fontWeight: 500,
+                    fontSize: 15,
+                    textTransform: 'uppercase',
+                    backgroundColor: '#009FDA',
+                    borderColor: '#009FDA',
+                    marginTop: 20,
+                  }}
+                >
+                  Export MY Notes
+                </Button>
+              </div>
+            );
+          }
+
+          // Screenshots
+          const widthMap = { doctorNote: '65%', textMessage: '50%', image: '50%' };
+          if (widthMap[qa.type]) {
             const altMap = {
               doctorNote: 'Email screenshot',
               textMessage: 'Text message screenshot',
               image: 'Image',
             };
-            const width = widthMap[qa?.type];
-            if (width) {
-              return (
-                <div key={pageIndex} style={{ marginBottom: 20 }}>
-                  <img
-                    src={qa.content.screenshot}
-                    alt={altMap[qa.type] || qa.type}
-                    style={{ width }}
-                  />
-                </div>
-              );
-            }
+            return (
+              <div key={pageIndex} style={{ marginBottom: 20 }}>
+                <img
+                  src={qa.content.screenshot}
+                  alt={altMap[qa.type] || qa.type}
+                  style={{ width: widthMap[qa.type] }}
+                />
+              </div>
+            );
+          }
 
-            if (qa.type === 'chart') {
-              const { labels, series, metric, subtext } = qa.content;
-              return (
-                <div key={pageIndex} style={{ marginBottom: 20, width: '550px' }}>
-                  <ChartCard
-                    title={qa.title}
-                    labels={labels}
-                    series={series}
-                    metric={metric}
-                    subtext={subtext}
-                    period="This Week"
-                    periods={['This Week', 'Last Week']}
-                    onPeriodChange={(p) => console.log('Period →', p)}
+          // Chart
+          if (qa.type === 'chart') {
+            const { labels, series, metric, subtext } = qa.content;
+            return (
+              <div key={pageIndex} style={{ marginBottom: 20, width: '550px' }}>
+                <ChartCard
+                  title={qa.title}
+                  labels={labels}
+                  series={series}
+                  metric={metric}
+                  subtext={subtext}
+                  period="This Week"
+                  periods={['This Week', 'Last Week']}
+                  onPeriodChange={(p) => console.log('Period →', p)}
+                />
+              </div>
+            );
+          }
+
+          return null;
+        })()}
+      </div>
+
+      {/* Highlighter / Notes Popup */}
+      {showNewNotePopup && (
+        <div
+          style={{
+            position: 'absolute',
+            top: '210px',
+            left: '290px',
+            width: '292px',
+            backgroundColor: '#FFF',
+            border: '1px solid #D4D4D4',
+            borderRadius: '8px',
+            padding: '16px',
+            boxShadow: '0px 2px 6px rgba(0,0,0,0.1)',
+            zIndex: 11,
+            boxSizing: 'border-box',
+          }}
+        >
+          <div style={{ display: 'flex', justifyContent: 'flex-end' }}>
+            <span
+              className="material-icons"
+              onClick={() => setShowNewNotePopup(false)}
+              style={{ fontSize: '20px', color: '#777', cursor: 'pointer', paddingBottom: '6px' }}
+            >
+              close
+            </span>
+          </div>
+
+          <div
+            style={{
+              width: '100%',
+              height: '68px',
+              border: '1px solid #D4D4D4',
+              borderRadius: '8px',
+              padding: '12px',
+              display: 'flex',
+              alignItems: 'center',
+              gap: '24px',
+            }}
+          >
+            {['Highlight', 'Take Notes'].map((t) => (
+              <div
+                key={t}
+                onClick={() => setNoteTab(t)}
+                style={{
+                  fontSize: '14px',
+                  fontWeight: 500,
+                  color: noteTab === t ? '#007BFF' : '#252525',
+                  cursor: 'pointer',
+                  position: 'relative',
+                  paddingBottom: '4px',
+                }}
+              >
+                {t}
+                {noteTab === t && (
+                  <div
+                    style={{
+                      position: 'absolute',
+                      bottom: 0,
+                      left: 0,
+                      width: '100%',
+                      height: '2px',
+                      backgroundColor: '#007BFF',
+                      borderRadius: '1px',
+                    }}
                   />
+                )}
+              </div>
+            ))}
+          </div>
+
+          {noteTab === 'Take Notes' ? (
+            <textarea
+              style={{
+                width: '100%',
+                height: '230px',
+                marginTop: '12px',
+                padding: '12px',
+                border: '1px solid #D4D4D4',
+                borderRadius: '8px',
+                fontSize: '14px',
+                fontFamily: 'inherit',
+                outline: 'none',
+                resize: 'none',
+              }}
+              placeholder="Write your note here..."
+            />
+          ) : (
+            <div
+              style={{
+                height: '52px',
+                border: '1px solid #D4D4D4',
+                borderRadius: '8px',
+                padding: '12px',
+                marginTop: '12px',
+                display: 'flex',
+                justifyContent: 'space-between',
+                alignItems: 'center',
+              }}
+            >
+              {['NONE', '#BD6697', '#67BC46', '#F89B1B', '#009FDA'].map((color) => (
+                <div
+                  key={color}
+                  onClick={() => setSelectedHighlightColor(color)}
+                  style={{
+                    width: color === 'NONE' ? '55px' : '27px',
+                    height: '27px',
+                    borderRadius: '4px',
+                    border: selectedHighlightColor === color ? '2px solid #007BFF' : '1px solid #D4D4D4',
+                    backgroundColor: color === 'NONE' ? 'transparent' : color,
+                    cursor: 'pointer',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    fontSize: '12px',
+                    color: '#555',
+                  }}
+                >
+                  {color === 'NONE' && 'NONE'}
                 </div>
-              );
-            }
-            return null;
-          })()}
+              ))}
+            </div>
+          )}
         </div>
       )}
 
-      {/* Pre-start instructions */}
-      {!started && configShowVideo && (
-        <p style={{ maxWidth: '70%', color: '#444', fontSize: 15, overflow: "auto", height: "150px" }}>
-          Parental divorce is a life-changing event that can require families to make big adjustments.
-
-          Both parents and children can struggle to settle into new circumstances, and many factors can affect how well families navigate the transition.
-
-          How much conflict is there between parents after the divorce?
-
-          How important is it that the child spend time with each parent, and how much time is the right amount now that there are two households?
-
-          Do other changes, like moving homes or changing schools, affect children?
-
-          Review the research that can be applied to this case under "Consult the Research" and then dig deeper into the Mason family's current circumstances while you "Investigate the Evidence".
-
-          After you've gathered all the information, make a decision about what you think the best course of action is for the Masons, giving a rationale for your thinking process.
-        </p>
-      )}
-
-      {/* Navigation */}
-      <div className="d-flex justify-content-between" style={{ width: '100%' }}>
-        {/* Start button */}
-        {!started && configShowVideo ? (
-          <Button
-            variant="primary"
-            disabled={!videoEnded}
-            onClick={() => { handleStartClick() }}
-            style={{
-              width: 106,
-              height: 40,
-              borderRadius: 4,
-              fontWeight: 500,
-              fontSize: 16,
-              textTransform: 'uppercase',
-              backgroundColor: '#BD6697',
-              borderColor: '#BD6697',
-              bottom: 10,
-              position: 'absolute'
-            }}
-          >
-            Start
-          </Button>
-        ) : (
-          <div style={{ width: 106 }} />
-        )}
-
-        {/* Prev / Next */}
-        {started && (
-          <div className="d-flex gap-2" style={{ position: 'absolute', bottom: 15, right: 15 }} >
-            <Button variant="secondary"
+      {
+        isMainTab ?
+          // start button 
+          (
+            <Button
+              variant="primary"
+              disabled={qa.type === 'video' && !videoEnded}
+              onClick={() => handleNext()}
               style={{
-                width: 115,
+                width: 106,
                 height: 40,
                 borderRadius: 4,
                 fontWeight: 500,
                 fontSize: 16,
                 textTransform: 'uppercase',
-                backgroundColor: 'transparent',
-                borderColor: '#BDBDBD',
-                color: '#000',
-                borderWidth: 1
+                backgroundColor: '#BD6697',
+                borderColor: '#BD6697',
+                bottom: 10,
+                position: 'absolute'
               }}
-              onClick={handlePrev}>
-              ← Back
+            >
+              Start
             </Button>
-            <Button variant="secondary"
-              style={{
-                width: 115,
-                height: 40,
-                borderRadius: 4,
-                fontWeight: 500,
-                fontSize: 16,
-                textTransform: 'uppercase',
-                backgroundColor: 'transparent',
-                borderColor: '#BDBDBD',
-                color: '#000',
-                borderWidth: 1
-              }}
-              onClick={handleNext}>
-              Next →
-            </Button>
-          </div>
-        )}
-      </div>
+          )
+          :
+          //  Navigation Buttons
+          (
+            <div
+              className="d-flex"
+              style={{ position: 'absolute', bottom: 15, gap: 10, width: '100%', justifyContent: 'flex-end', right: 15 }}
+            >
+              <Button
+                variant="secondary"
+                onClick={handlePrev}
+                style={{
+                  width: 115,
+                  height: 40,
+                  borderRadius: 4,
+                  fontWeight: 500,
+                  fontSize: 16,
+                  textTransform: 'uppercase',
+                  backgroundColor: 'transparent',
+                  borderColor: '#BDBDBD',
+                  color: '#000',
+                }}
+              >
+                ← Back
+              </Button>
+              {!isLastPageOfTab4 && (
+                <Button
+                  variant="secondary"
+                  onClick={handleNext}
+                  disabled={qa.type === 'video' && !videoEnded}
+                  style={{
+                    width: 115,
+                    height: 40,
+                    borderRadius: 4,
+                    fontWeight: 500,
+                    fontSize: 16,
+                    textTransform: 'uppercase',
+                    backgroundColor: 'transparent',
+                    borderColor: '#BDBDBD',
+                    color: '#000',
+                  }}
+                >
+                  Next →
+                </Button>
+              )}
+            </div>
+          )
+      }
     </div>
   );
 };
-
 export default RightPanel;
