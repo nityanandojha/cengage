@@ -20,6 +20,8 @@ const RightPanel = ({
   const [showNewNotePopup, setShowNewNotePopup] = useState(false);
   const [noteTab, setNoteTab] = useState('Highlight');
   const [selectedHighlightColor, setSelectedHighlightColor] = useState('');
+  const [highlights, setHighlights] = useState({});
+  const [currentHighlightId, setCurrentHighlightId] = useState(null);
 
   useEffect(() => {
     setVideoEnded(false);
@@ -28,24 +30,33 @@ const RightPanel = ({
   useEffect(() => {
     const handleMouseUp = () => {
       const selection = window.getSelection();
-      const text = selection?.toString();
+      const text = selection?.toString().trim();
+
       if (text) {
-        setHighlightedText(text);
-        setShowNewNotePopup(true);
+        const id = selection.anchorNode?.parentElement?.getAttribute('data-id');
+        if (id) {
+          setHighlightedText(text);
+          setCurrentHighlightId(id);
+          setShowNewNotePopup(true);
+        }
       }
     };
+
     document.addEventListener('mouseup', handleMouseUp);
     return () => document.removeEventListener('mouseup', handleMouseUp);
   }, []);
 
-  const applyHighlight = (text, highlight, color) => {
-    if (!highlight || !text) return text;
-    const escaped = highlight.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+  const applyHighlight = (text, id) => {
+    const highlightObj = highlights[id];
+    if (!highlightObj || !highlightObj.text || !text) return text;
+
+    const escaped = highlightObj.text.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
     return text.replace(
       new RegExp(escaped, 'gi'),
-      (match) => `<span style="background-color: ${color}; border-radius:4px; padding:2px;">${match}</span>`
+      (match) => `<span style="background-color: ${highlightObj.color}; border-radius:4px; padding:2px;">${match}</span>`
     );
   };
+
 
   const handleNext = () => {
     if (pageIndex < contentTitle.length - 1) {
@@ -93,8 +104,9 @@ const RightPanel = ({
       {contentTitle[pageIndex] && (
         <p
           style={{ color: '#22242C', fontSize: '15px', width: '95%' }}
+          data-id={`mainTitle-${contentTitle[pageIndex]}`}
           dangerouslySetInnerHTML={{
-            __html: applyHighlight(contentTitle[pageIndex], highlightedText, selectedHighlightColor),
+            __html: applyHighlight(contentTitle[pageIndex], `mainTitle-${contentTitle[pageIndex]}`),
           }}
         />
 
@@ -127,8 +139,9 @@ const RightPanel = ({
                 <div
                   className="accordion-body"
                   style={{ height: 'auto', overflowY: 'auto' }}
+                  data-id={`script-${script}`}
                   dangerouslySetInnerHTML={{
-                    __html: applyHighlight(script, highlightedText, selectedHighlightColor),
+                    __html: applyHighlight(script, `script-${script}`),
                   }}
                 />
               </div>
@@ -170,8 +183,9 @@ const RightPanel = ({
                 <p
                   key={qa}
                   style={{ maxWidth: '100%', color: '#444', fontSize: 15, padding: '16px 0' }}
+                  data-id={`qatitle-${qa}`}
                   dangerouslySetInnerHTML={{
-                    __html: applyHighlight(qa.title, highlightedText, selectedHighlightColor),
+                    __html: applyHighlight(qa.title, `qatitle-${qa}`),
                   }}
                 />
               </div>
@@ -209,8 +223,9 @@ const RightPanel = ({
                     <div className="accordion-body" style={{ height: 'auto', overflowY: 'auto' }}>
                       <div
                         style={{ color: '#22242C', fontSize: '15px', lineHeight: '20px' }}
+                        data-id={`faq-${i}`}
                         dangerouslySetInnerHTML={{
-                          __html: applyHighlight(faq.answer, highlightedText, selectedHighlightColor),
+                          __html: applyHighlight(faq.answer, `faq-${i}`),
                         }}
                       />
                     </div>
@@ -228,8 +243,9 @@ const RightPanel = ({
                   <li
                     key={idx}
                     style={{ marginBottom: 10 }}
+                    data-id={`Unordered-${idx}`}
                     dangerouslySetInnerHTML={{
-                      __html: applyHighlight(item.opt, highlightedText, selectedHighlightColor),
+                      __html: applyHighlight(item.opt, `Unordered-${idx}`),
                     }}
                   />
                 ))}
@@ -245,8 +261,9 @@ const RightPanel = ({
                   <p
                     key={idx}
                     style={{ fontSize: 16, fontWeight: 400, color: '#22242C' }}
+                    data-id={`notes-${idx}`}
                     dangerouslySetInnerHTML={{
-                      __html: applyHighlight(item.opt, highlightedText, selectedHighlightColor),
+                      __html: applyHighlight(item.opt, `notes-${idx}`),
                     }}
                   />
 
@@ -410,14 +427,22 @@ const RightPanel = ({
                 alignItems: 'center',
               }}
             >
-              {/* {['NONE', '#BD6697', '#67BC46', '#F89B1B', '#009FDA'].map((color) => ( */}
               {hightLightColor.map((item) => (
                 < div
                   key={item.colorValue}
                   onClick={() => {
-                    setSelectedHighlightColor(item.colorValue);
-                    setShowNewNotePopup(false);
+                    if (currentHighlightId) {
+                      setHighlights((prev) => ({
+                        ...prev,
+                        [currentHighlightId]: {
+                          text: highlightedText,
+                          color: item.colorValue,
+                        },
+                      }));
+                      setShowNewNotePopup(false);
+                    }
                   }}
+
                   style={{
                     width: item.color === 'NONE' ? '55px' : '27px',
                     height: '27px',
@@ -458,8 +483,9 @@ const RightPanel = ({
                 textTransform: 'uppercase',
                 backgroundColor: '#BD6697',
                 borderColor: '#BD6697',
-                bottom: 10,
-                position: 'absolute'
+                bottom: 5,
+                // position: 'absolute',
+                marginTop: 5
               }}
             >
               Start

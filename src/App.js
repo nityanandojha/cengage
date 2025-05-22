@@ -6,22 +6,22 @@ import BottomPanel from './components/BottomPanel/BottomPanel';
 
 const headerConfig = {
   main: {
-    title: 'Chapter 2: Investigate Development: Real-Life Applications',
+    title: 'Investigate Development- Post Divorce Adjustment REVISIONS',
     color: '#BD6697',
     bgColor: '#B9508C1A'
   },
   tab2: {
-    title: 'Chapter 2: Investigate Development: Real-Life Applications',
+    title: 'Investigate Development- Post Divorce Adjustment REVISIONS',
     color: '#67BC46',
     bgColor: '#0F89071A'
   },
   tab3: {
-    title: 'Chapter 2: Investigate Development: Real-Life Applications',
+    title: 'Investigate Development- Post Divorce Adjustment REVISIONS',
     color: '#F89B1B',
     bgColor: '#C257001A'
   },
   tab4: {
-    title: 'Chapter 2: Investigate Development: Real-Life Applications',
+    title: 'Investigate Development- Post Divorce Adjustment REVISIONS',
     color: '#009FDA',
     bgColor: '#0071DB1A'
   },
