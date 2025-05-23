@@ -8,7 +8,7 @@ export const RIGHT_CONFIG = {
         questionAnswer: [
             {
                 type: 'video',
-                title: 'video',
+                title: 'Parental divorce is a life-changing event that can require families to make big adjustments. Both parents and children can struggle to settle into new circumstances, and many factors can affect how well families navigate the transition. How much conflict is there between parents after the divorce? How important is it that the child spend time with each parent, and how much time is the right amount now that there are two households? Do other changes, like moving homes or changing schools, affect children? Review the research that can be applied to this case under "Consult the Research” and then dig deeper into the Mason family’s current circumstances  while you “Investigate the Evidence”. After you’ve gathered all the information, make a decision about what you think the best course of action is for the Masons, giving a rationale for your thinking process.',
                 content: {
                     video: "/videos/psych_post_divorce_adjustment.mp4"
                 }
@@ -23,10 +23,18 @@ export const RIGHT_CONFIG = {
         ],
         questionAnswer: [
             {
+                type: 'video',
+                title: 'The more parental conflict there is, the higher the risk for adjustment problems to children. These adjustment problems are academic, emotional, social, and even health related (El-Sheikh & Erath, 2011; Van Dijk et al., 2020). Interparental conflict that is characterized as hostile, frequent, and child-related are particularly harmful to a child’s wellbeing (van Eldik et al., 2020).<br/><br/>Researchers have proposed that parent conflict activates the body’s biological stress response system to change hormone levels, biological systems like sleep, and physical health (Davidson et al., 2014). Kuhlman et al. (2018) have found that children living in environments characterized by high levels of interparental conflict have an exaggerated stress response when faced with a stressor.<br/><br/>Conflict between parents after divorce can be lower, higher, or the same as conflict levels pre-divorce (Cao et al., 2022). The literature has also focused on the relative contributions of pre- and post-divorce conflict.  Booth and Amato (2001) reported that children’s adjustment difficulties decrease when a high conflict marriage ends in divorce and thus, the conflict dissipates. On the other hand, parental divorce in a low-conflict marriage seems to have more negative effects on children’s well-being.',
+                content: {
+                    video: "/videos/psych_post_divorce_adjustment.mp4"
+                },
+                showScript: true
+            },
+            {
                 faqs: [
                     {
-                        question: "First Trimester",
-                        answer: "Well, it certainly was unexpected, but really, I’m super happy about it. So is Morgan, my partner. We’ve been together six years and both enjoy kids…"
+                        question: "References:",
+                        answer: "Booth, A., & Amato, P. R. (2001). Parental predivorce relations and Offspring Postdivorce Well‐Being. Journal of Marriage and the Family/Journal of Marriage and Family, 63(1), 197–212."
                     },
                     {
                         question: "Second and Third Trimesters",
