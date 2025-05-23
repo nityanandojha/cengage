@@ -13,11 +13,12 @@
   /* alternatively: width: 25%; */
   height: 80px;
   border-top: 12px solid transparent;
-  padding: 24px 16px 16px;
+  /* padding: 24px 16px 16px; */
   background-color: #fff;
   display: flex;
   align-items: center;
   box-sizing: border-box;
+
 }
 
 /* remove any width: '25%' or width: '100%' from your .btn-* classes */
@@ -43,22 +44,22 @@
 
 /* Inner layout */
 .icon-container {
-  margin-right: 12px;
+  margin-right: 8px;
   display: flex;
   align-items: center;
+  gap: 14px;
 }
 
 .status-indicator {
-  width: 16px;
-  height: 16px;
+  width: 18px;
+  height: 18px;
   border-radius: 50%;
-  position: relative;
-  top: 12px;
   display: flex;
   align-items: center;
   justify-content: center;
   font-size: 10px;
   font-weight: bold;
+  margin-left: 20px;
 }
 
 /* Default (not visited): gray circle outline */
