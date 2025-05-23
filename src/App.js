@@ -29,14 +29,44 @@ const headerConfig = {
 
 function App() {
   const [activeTab, setActiveTab] = useState('main');
+  const [inProgress, setInProgress] = useState('main');
   const { title, color, bgColor } = headerConfig[activeTab] || headerConfig.main;
+
+  const [tabStates, setTabStates] = useState({
+    main: 'default',
+    tab2: 'default',
+    tab3: 'default',
+    tab4: 'default',
+  });
+
+  const handleSetActiveTab = (tab) => {
+    setActiveTab(tab);
+    setTabStates((prev) => ({
+      ...prev,
+      [tab]: 'viewed',
+    }));
+  };
+
+  const handleSetInProgressTab = (tab) => {
+    setInProgress(tab)
+    setTabStates((prev) => ({
+      ...prev,
+      [tab]: 'active'
+    }));
+  };
+
 
   return (
     <div className="App">
       <div className="centered">
         <Header title={title} color={color} bgColor={bgColor} />
-        <TabWizard onTabChange={setActiveTab} />
-        <BottomPanel setActiveTab={setActiveTab} />
+        <TabWizard onTabChange={handleSetActiveTab} onProgress={handleSetInProgressTab} />
+        <BottomPanel
+          activeTab={activeTab}
+          setActiveTab={handleSetActiveTab}
+          tabStates={tabStates}
+          inProgress={inProgress}
+        />
       </div>
     </div>
   );

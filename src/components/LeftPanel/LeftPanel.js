@@ -25,7 +25,7 @@ const LeftPanel = ({
       gap: '16px',
       boxSizing: 'border-box',
       fontFamily: 'Work Sans, sans-serif',
-      margin: '6px',
+      marginTop: '6px',
       // position: 'relative'
     }}>
       {/* Primary List */}

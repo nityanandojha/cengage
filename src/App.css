@@ -21,7 +21,9 @@ body {
   align-items: center;       /* horizontal centering */
   justify-content: center;   /* vertical centering */
   min-height: 100vh;         /* make it full-screen height */
-  padding: 16px;             /* optional breathing room */
+  padding: 5px;          
+  padding-right: 10px;
+  padding-left: 10px;  
 }
 .centered {
   display: flex;
@@ -32,7 +34,8 @@ body {
   border: 1px solid #ccc;
   border-radius: 5px;
   box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-  padding: 5px;
+  padding-left: 5px;
+  padding-right: 5px;
 }
 
 @keyframes App-logo-spin {
