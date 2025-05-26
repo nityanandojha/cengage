@@ -8,7 +8,7 @@ import { MdOutlineLightbulb } from "react-icons/md";
 const buttons = [
   {
     id: 1,
-    label: '',
+    label: ' ',
     sub: 'Introduction',
     borderColor: '#BD6697',
     className: 'btn-intro',
