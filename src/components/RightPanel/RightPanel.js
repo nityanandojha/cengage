@@ -20,7 +20,11 @@ const RightPanel = ({
   const [showNewNotePopup, setShowNewNotePopup] = useState(false);
   const [noteTab, setNoteTab] = useState('Highlight');
   const [selectedHighlightColor, setSelectedHighlightColor] = useState('');
-  const [highlights, setHighlights] = useState({});
+  const [highlights, setHighlights] = useState(() => {
+    const stored = localStorage.getItem('highlights');
+    return stored ? JSON.parse(stored) : {};
+  });
+
   const [currentHighlightId, setCurrentHighlightId] = useState(null);
 
   useEffect(() => {
@@ -45,6 +49,7 @@ const RightPanel = ({
     document.addEventListener('mouseup', handleMouseUp);
     return () => document.removeEventListener('mouseup', handleMouseUp);
   }, []);
+
 
   const applyHighlight = (text, id) => {
     const highlightObj = highlights[id];
@@ -103,7 +108,12 @@ const RightPanel = ({
       {/* Title */}
       {contentTitle[pageIndex] && (
         <p
-          style={{ color: '#22242C', fontSize: '15px', width: '95%' }}
+          style={{
+            color: '#22242C',
+            fontSize: '15px',
+            width: qa.showScript ? '70%' : '95%'
+          }}
+
           data-id={`mainTitle-${contentTitle[pageIndex]}`}
           dangerouslySetInnerHTML={{
             __html: applyHighlight(contentTitle[pageIndex], `mainTitle-${contentTitle[pageIndex]}`),
@@ -431,17 +441,24 @@ const RightPanel = ({
                 < div
                   key={item.colorValue}
                   onClick={() => {
-                    if (currentHighlightId) {
-                      setHighlights((prev) => ({
-                        ...prev,
-                        [currentHighlightId]: {
-                          text: highlightedText,
-                          color: item.colorValue,
-                        },
-                      }));
+                    if (currentHighlightId && highlightedText) {
+                      const newHighlight = {
+                        text: highlightedText,
+                        color: item.colorValue,
+                      };
+                      setHighlights((prev) => {
+                        const updated = {
+                          ...prev,
+                          [currentHighlightId]: newHighlight,
+                        };
+                        localStorage.setItem('highlights', JSON.stringify(updated));
+                        return updated;
+                      });
+
                       setShowNewNotePopup(false);
                     }
                   }}
+
 
                   style={{
                     width: item.color === 'NONE' ? '55px' : '27px',
@@ -481,14 +498,18 @@ const RightPanel = ({
                 fontWeight: 500,
                 fontSize: 16,
                 textTransform: 'uppercase',
-                backgroundColor: '#BD6697',
-                borderColor: '#BD6697',
+                backgroundColor:
+                  qa.type === 'video' && !videoEnded ? '#D4D4D4' : '#BD6697',
+                color:
+                  qa.type === 'video' && !videoEnded ? '#707070' : '#FFFFFF',
+                borderColor:
+                  qa.type === 'video' && !videoEnded ? '#D4D4D4' : '#BD6697',
                 bottom: 5,
-                // position: 'absolute',
-                marginTop: 5
+                marginTop: 5,
+                cursor: qa.type === 'video' && !videoEnded ? 'not-allowed' : 'pointer',
               }}
             >
-              Start
+              Start →
             </Button>
           )
           :

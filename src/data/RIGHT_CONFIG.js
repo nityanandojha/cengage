@@ -11,7 +11,8 @@ export const RIGHT_CONFIG = {
                 title: 'Parental divorce is a life-changing event that can require families to make big adjustments. Both parents and children can struggle to settle into new circumstances, and many factors can affect how well families navigate the transition. How much conflict is there between parents after the divorce? How important is it that the child spend time with each parent, and how much time is the right amount now that there are two households? Do other changes, like moving homes or changing schools, affect children? Review the research that can be applied to this case under "Consult the Research” and then dig deeper into the Mason family’s current circumstances  while you “Investigate the Evidence”. After you’ve gathered all the information, make a decision about what you think the best course of action is for the Masons, giving a rationale for your thinking process.',
                 content: {
                     video: "/videos/psych_post_divorce_adjustment.mp4"
-                }
+                },
+                showScript: true
             }],
         script: "Hi, I’m Dr. Mathilde Feldman. … (main tab script content here)",
         showVideoPage: true,
